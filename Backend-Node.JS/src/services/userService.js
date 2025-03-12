@@ -3,7 +3,12 @@ import bcrypt, { compareSync } from 'bcrypt';
 
 let getlistUser = async () => {
     try {
-        let data = await db.User.findAll();
+        let data = await db.User.findAll({
+            raw: true,
+            attributes: {
+                exclude: ['password']
+            }
+        });
         return data;
     } catch (error) {
         console.log(error);

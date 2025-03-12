@@ -6,7 +6,11 @@ const userService = {
         let res = axios.post('/api/login', { email, password });
         console.log(res);
         return res;
-    }
+    },
+
+    getAllUsers() {
+        return axios.get(`/user/getlistuser`);
+    },
 
 };
 
