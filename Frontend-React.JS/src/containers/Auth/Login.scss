@@ -1,0 +1,36 @@
+.login-background {
+    // background: rgb(34, 193, 195);
+    background: linear-gradient(135deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+    font-family: "Work Sans";
+    height: 100vh;
+
+}
+.login-container {
+    width: 450px;
+    min-height: 500px;
+    background: white;
+    margin: 0 auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    padding: 20px;
+}
+.btn-submit{
+    background: linear-gradient(135deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    width: 100%;
+    font-size: 16px;
+    margin: 20px 0;
+    display: block;
+}
+.icon-social{
+    font-size: 100px;
+    color: black;
+}
+
+
+
