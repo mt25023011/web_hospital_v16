@@ -4,33 +4,69 @@
     font-family: "Work Sans";
     height: 100vh;
 
-}
-.login-container {
-    width: 450px;
-    min-height: 500px;
-    background: white;
-    margin: 0 auto;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 10px;
-    padding: 20px;
-}
-.btn-submit{
-    background: linear-gradient(135deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    width: 100%;
-    font-size: 16px;
-    margin: 20px 0;
-    display: block;
-}
-.icon-social{
-    font-size: 100px;
-    color: black;
-}
+    .login-container {
+        width: 450px;
+        min-height: 500px;
+        background: white;
+        margin: 0 auto;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 10px;
+        padding: 20px;
 
+        .input-group-text {
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 0;
+            z-index: 10;
+        }
 
+        .btn-submit {
+            background: linear-gradient(135deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            width: 100%;
+            font-size: 16px;
+            margin: 20px 0;
+            display: block;
+        }
+        .text-login {
+            font-size: 20px;
+            color: #000000;
+        }
+        
+        .btn-social {
+            padding: 8px;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            text-align: center;
+            font-size: 30px;
+            margin: 0 10px;
+            transition: all 0.2s;
+        
+            &.google-btn {
+                background: #fa0000;
+                color: #ffffff;
+            }
+        
+            &.facebook-btn {
+                background: #3b5998;
+                color: #ffffff;
+            }
+        
+            &.github-btn {
+                background: #000000;
+                color: #ffffff;
+            }
+        }
+    }
+}
 
