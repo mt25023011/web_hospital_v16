@@ -59,7 +59,6 @@ let updateUser = async (req, res) => {
         if (Object.keys(req.body).length === 0) {
             return res.status(400).json({ error: "Update data is required" });
         }
-
         let data = await userService.updateUser(id, req.body);
         return res.status(200).json(data);
     } catch (error) {
@@ -67,11 +66,26 @@ let updateUser = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 }
+let handleLogin = async (req, res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    if (!email || !password) {
+        return res.status(500).json({
+            errCode: 1,
+            message: "Missing inputs parameter!"
+        })
+    }
+
+    let userData = await userService.handleUserLogin(email, password);
+    return res.status(200).json(userData);
+}
 
 export default {
     getlistUser: getlistUser,
     getUserById: getUserById,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
-    updateUser: updateUser
+    updateUser: updateUser,
+    handleLogin: handleLogin
 }
