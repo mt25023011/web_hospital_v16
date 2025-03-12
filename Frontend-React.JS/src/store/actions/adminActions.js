@@ -12,3 +12,8 @@ export const adminLoginFail = () => ({
 export const processLogout = () => ({
     type: actionTypes.PROCESS_LOGOUT
 })
+
+export const userLoginFail = () => ({
+    type: actionTypes.USER_LOGIN_FAIL
+})
+

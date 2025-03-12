@@ -3,10 +3,17 @@ import viewEngine from './config/viewEngine';
 import initWebRoutes from './route/web';
 import bodyParser from 'body-parser';
 import multer from 'multer';
+import cors from 'cors';
 
 require('dotenv').config();
 
 const app = express();
+app.use(cors({
+    origin:true,
+    credentials:true,
+    methods:['GET','POST','PUT','DELETE'],
+    allowedHeaders:['Content-Type','Authorization']
+}));
 
 // Setup body-parser
 app.use(bodyParser.json());
