@@ -1,5 +1,7 @@
 import db from '../models/index';
 import bcrypt, { compareSync } from 'bcrypt';
+import fs from 'fs';
+import path from 'path';
 
 let getlistUser = async () => {
     try {
@@ -28,19 +30,60 @@ let getUserbyID = async (id) => {
 
 let createNewUser = async (data) => {
     try {
-        console.log('Body in service:', data);
-        console.log('data.password:', data.password);
         if (data.password) {
             const salt = bcrypt.genSaltSync(10);
             data.password = bcrypt.hashSync(data.password, salt);
-
         }
         if(data.roleID) {
             data.roleID = `R${data.roleID === '1' ? '1' : data.roleID === '0' ? '0' : '2'}`;
         }
+        
+        // Handle image upload
+        if(data.image) {
+            try {
+                // Validate base64 string
+                if (!data.image.startsWith('data:image/')) {
+                    throw new Error('Invalid image format. Image must be a valid base64 string starting with data:image/');
+                }
+
+                // Extract image data and extension
+                const matches = data.image.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
+                if (!matches || matches.length !== 3) {
+                    throw new Error('Invalid image format');
+                }
+
+                const imageExtension = matches[1];
+                const base64Data = matches[2];
+
+                // Create buffer from base64
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+
+                // Generate unique filename
+                const fileName = `user-${Date.now()}.${imageExtension}`;
+                
+                // Define upload path
+                const uploadPath = path.join(__dirname, '../public/user/images');
+                
+                // Create directory if it doesn't exist
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                // Save file
+                const filePath = path.join(uploadPath, fileName);
+                fs.writeFileSync(filePath, imageBuffer);
+
+                // Update image path in data
+                data.image = `/user/images/${fileName}`;
+            } catch (error) {
+                console.error('Error processing image:', error);
+                throw new Error(`Image processing failed: ${error.message}`);
+            }
+        }
+
         // Create new user in database
         const newUser = await db.User.create(data);
-        
+
         // Return created user without password
         const { password, ...userWithoutPassword } = newUser.toJSON();
         return userWithoutPassword;
@@ -55,6 +98,13 @@ let deleteUser = async (id) => {
         let data = await db.User.findOne({ where: { id: id } });
         if(!data) {
             throw new Error('User not found');
+        }
+        if(data.image) {
+            const imagePath = path.join(__dirname, '../public', data.image);
+            if(fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+            
         }
         await db.User.destroy({ where: { id: id } });
         return "Delete user successfully";

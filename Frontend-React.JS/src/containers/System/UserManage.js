@@ -67,8 +67,9 @@ class UserManage extends Component {
           <div className="table-responsive">
             <table className="table table-hover table-bordered">
               <thead className="table-dark text-center">
-                <tr>
+                <tr style={{position: "sticky", top: 0}}>
                   <th scope="col">#</th>
+                  <th scope="col">Image</th>
                   <th scope="col">Email</th>
                   <th scope="col">Full Name</th>
                   <th scope="col">Address</th>
@@ -83,11 +84,19 @@ class UserManage extends Component {
                   return (
                     <tr key={index} className="fs-5">
                       <th scope="row" className="text-center">{index + 1}</th>
-                      <td className="col-2">{user.email}</td>
+                      <td>
+                        <img 
+                          src={user.image ? `${process.env.REACT_APP_BACKEND_URL}${user.image}` : '/default-user-image.png'} 
+                          alt="User" 
+                          className="img-fluid rounded-circle" 
+                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                        />
+                      </td>
+                      <td>{user.email}</td>
                       <td>
                         {user.firstName} {user.lastName}
                       </td>
-                      <td className="col-3">{user.address}</td>
+                      <td>{user.address}</td>
                       <td>{user.phoneNumber}</td>
                       <td className="text-center">
                         {
@@ -101,21 +110,15 @@ class UserManage extends Component {
                       <td className="text-center">
                           {
                             user.roleID === "R0" ? (
-                              <span className="badge bg-primary fs-7">
-                                Admin
-                              </span>
+                              <span className="badge bg-primary fs-7">Admin</span>
                             ) : user.role === "R1" ? (
-                              <span className="badge bg-success fs-7">
-                                Doctor
-                              </span>
+                              <span className="badge bg-success fs-7">Doctor</span>
                             ) : (
-                              <span className="badge bg-secondary fs-7">
-                                Patient
-                              </span>
+                              <span className="badge bg-secondary fs-7">Patient</span>
                             )
                           }
                       </td>
-                      <td className="col-2">
+                      <td>
                         <div className="d-flex justify-content-center gap-2">
                           <button className="btn px-2 fs-7 btn-edit">
                             <i className="fas fa-pencil-alt"></i>
