@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
-import {userService} from '../../services/';
+import {userService} from '../../../services';
 import './UserManage.scss';
-import ConfirmModal from '../../components/ConfirmModal';
-import * as actions from '../../store/actions';
-import { ToastUtil } from '../../utils';
+import ConfirmModal from '../../../components/ConfirmModal';
+import * as actions from '../../../store/actions';
+import { ToastUtil } from '../../../utils';
 
 class UserManage extends Component {
   state = {};
@@ -57,6 +57,9 @@ class UserManage extends Component {
     });
   };
   
+  handleAddUser() {
+    this.props.history.push('/system/user-manage/add');
+  }
   
 
   render() {
@@ -64,6 +67,9 @@ class UserManage extends Component {
       <div className="users-container">
         <div className="title text-center">Manage Users</div>
         <div className="users-table mt-4 mx-3">
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-primary" onClick={() => this.handleAddUser()}>Add User</button>
+          </div>
           <div className="table-responsive">
             <table className="table table-hover table-bordered">
               <thead className="table-dark text-center">
