@@ -9,7 +9,7 @@
 
   hr {
     border: none;
-    border-bottom: 1px solid $border;;
+    border-bottom: 1px solid $border;
     width: 100%;
     margin: 10px 15px 5px 15px;
   }
@@ -30,6 +30,56 @@
     .custom-form-control.readonly {
       min-height: 28px;
       height: auto;
+    }
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .modal-title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .btn-close {
+      padding: 1.25rem;
+      margin: -0.5rem -0.5rem -0.5rem auto;
+      background-color: transparent;
+      border: 0;
+      opacity: 0.5;
+      transition: opacity .15s linear;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.75;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  &.danger {
+    .modal-header {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+      color: white;
+
+      &:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+      }
     }
   }
 }

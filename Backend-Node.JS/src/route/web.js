@@ -1,6 +1,7 @@
 import express from 'express';
 import homeController from '../controllers/homeController';
 import userController from '../controllers/userController';
+import authController from '../controllers/authController';
 import multer from 'multer';
 
 let router = express.Router();
@@ -16,7 +17,7 @@ let initWebRoutes = (app) => {
     router.put('/user/updateuser', upload.none(), userController.updateUser);
 
     //api login
-    router.post('/api/login', upload.none(), userController.handleLogin);
+    router.post('/api/login', authController.handleLogin);
 
     return app.use('/', router);
 }

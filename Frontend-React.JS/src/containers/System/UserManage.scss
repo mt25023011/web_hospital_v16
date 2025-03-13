@@ -1,0 +1,18 @@
+.btn-edit {
+    background-color: #ffc107;
+    color: black;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+        background-color: green;
+    }
+}
+.btn-delete {
+    background-color: #dc3545;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+

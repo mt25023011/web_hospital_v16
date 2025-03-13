@@ -5,7 +5,8 @@
     "database": "web_appointment_hospital",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "logging": false
+    "logging": false,
+    "raw": true
   },
   "test": {
     "username": "root",

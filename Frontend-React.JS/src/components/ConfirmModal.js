@@ -56,18 +56,15 @@ class ConfirmModal extends Component {
 
     render() {
         const { contentOfConfirmModal } = this.props;
+        const modalClass = contentOfConfirmModal.status === 'danger' ? 'confirm-modal danger' : 'confirm-modal';
 
         return (
-            <Modal isOpen={contentOfConfirmModal.isOpen} className='confirm-modal' centered={true}>
-                <div className="modal-header">
+            <Modal isOpen={contentOfConfirmModal.isOpen} className={modalClass} centered={true}>
+                <div className={`modal-header ${contentOfConfirmModal.status === 'danger' ? 'bg-danger text-white' : ''}`}>
                     <div className="modal-title">
                         <FormattedMessage id={"common.confirm"} />
                     </div>
-                    <div className="col-auto">
-                        <button className="btn btn-close" onClick={this.onClose}>
-                            <i className="fal fa-times" />
-                        </button>
-                    </div>
+                    <button type="button" className={`btn-close ${contentOfConfirmModal.status === 'danger' ? 'btn-close-white' : ''}`} onClick={this.onClose} aria-label="Close"></button>
                 </div>
 
                 <div className="modal-body">
@@ -84,7 +81,7 @@ class ConfirmModal extends Component {
                                     <button className="btn btn-add" onClick={this.onClose} >
                                         <FormattedMessage id="common.close" />
                                     </button>
-                                    <button ref={this.acceptBtnRef} className="btn btn-add" onClick={this.onAcceptBtnClick}>
+                                    <button ref={this.acceptBtnRef} className={`btn ${contentOfConfirmModal.status === 'danger' ? 'btn-danger' : 'btn-add'}`} onClick={this.onAcceptBtnClick}>
                                         <FormattedMessage id={"common.accept"} />
                                     </button>
                                 </div>

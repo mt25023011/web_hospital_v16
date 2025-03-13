@@ -66,20 +66,8 @@ let updateUser = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 }
-let handleLogin = async (req, res) => {
-    let email = req.body.email;
-    let password = req.body.password;
 
-    if (!email || !password) {
-        return res.status(500).json({
-            errCode: 1,
-            message: "Missing inputs parameter!"
-        })
-    }
 
-    let userData = await userService.handleUserLogin(email, password);
-    return res.status(200).json(userData);
-}
 
 export default {
     getlistUser: getlistUser,
@@ -87,5 +75,4 @@ export default {
     createNewUser: createNewUser,
     deleteUser: deleteUser,
     updateUser: updateUser,
-    handleLogin: handleLogin
 }

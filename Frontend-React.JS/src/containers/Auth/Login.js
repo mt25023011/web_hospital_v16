@@ -7,7 +7,7 @@ import * as actions from "../../store/actions";
 import './Login.scss';
 import { FormattedMessage } from 'react-intl';
 import {userService} from '../../services/';
-import {adminService} from '../../services/adminService';
+import {authService} from '../../services/';
 
 class Login extends Component {
     constructor(props) {
@@ -28,7 +28,7 @@ class Login extends Component {
             errMessage: ''
         });
         try {
-            const res = await userService.handleLogin(this.state.email, this.state.password);
+            const res = await authService.handleLogin(this.state.email, this.state.password);
             if(res.errCode !== 0){
                 this.setState({
                     errMessage: res.message

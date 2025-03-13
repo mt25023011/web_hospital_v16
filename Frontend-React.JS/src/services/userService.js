@@ -2,14 +2,16 @@ import axios from '../axios';
 
 const userService = {
 
-    handleLogin(email, password) {
-        let res = axios.post('/api/login', { email, password });
+    getAllUsers() {
+        let res = axios.get(`/user/getlistuser`);
         console.log(res);
         return res;
     },
 
-    getAllUsers() {
-        return axios.get(`/user/getlistuser`);
+    deleteUser(id) {
+        let res = axios.delete(`/user/deleteuser?id=${id}`);
+        console.log(res);
+        return res;
     },
 
 };
