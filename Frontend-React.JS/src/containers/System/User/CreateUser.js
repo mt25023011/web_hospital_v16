@@ -68,10 +68,15 @@ class CreateUser extends Component {
         // Call the userService to create the user
         userService.createUser(data)
             .then(response => {
-                console.log(response); // handle the response as needed
+                console.log('Response from createUser:', response);
+                alert('User created successfully!');
+                this.props.history.push('/system/user-manage/');
             })
             .catch(error => {
                 console.error(error); // handle error if necessary
+                this.setState({
+                    errMessage: error.response ? error.response.data : error.message,
+                });
             });
     }
 
