@@ -5,6 +5,7 @@ import UserManage from '../containers/System/User/UserManage';
 import ProductManage from '../containers/System/ProductManage';
 import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
 import CreateUser from '../containers/System/User/CreateUser';
+import EditUser from '../containers/System/User/EditUser';
 
 class System extends Component {
     render() {
@@ -13,8 +14,9 @@ class System extends Component {
             <div className="system-container">
                 <div className="system-list">
                     <Switch>
-                        <Route path="/system/user-manage/add" component={CreateUser} />
-                        <Route path="/system/user-manage" component={UserManage} />
+                        <Route path="/system/user-manage/edit" component={EditUser}/>  
+                        <Route path="/system/user-manage/add" component={CreateUser} /> 
+                        <Route path="/system/user-manage" component={UserManage} /> 
                         <Route path="/system/product-manage" component={ProductManage} />
                         <Route path="/system/register-package-group-or-account" component={RegisterPackageGroupOrAcc} />
                         <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />

@@ -57,7 +57,51 @@ const userService = {
             throw error;
         });
     },
+    
+    getUserInfo(id) {
+        let res = axios.get(`/user/getuserbyid?id=${id}`);
+        console.log(res);
+        return res;
+    },
 
+    async updateUser(data) {
+        const formData = new FormData();
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                formData.append(key, data[key]);
+            }
+        }
+        if (data.image && data.image instanceof File) {
+            const reader = new FileReader();
+            await new Promise((resolve, reject) => {
+                reader.onload = () => {
+                    formData.set('image', reader.result);
+                    resolve();
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(data.image);
+            });
+        }
+        else {
+            formData.delete('image');
+        }
+        return axios.put(`/user/updateuser?id=${data.id}`, formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then((res) => {
+            console.log('Response from updateUser:', res);
+            return res;
+        })
+        .catch((error) => {
+            console.error('Error updating user:', error.response ? error.response.data : error.message);
+            if (error.response && error.response.status === 413) {
+                console.error('Payload size:', JSON.stringify(data).length);
+            }
+            throw error;
+        });
+    },
 };
 
 export default userService;

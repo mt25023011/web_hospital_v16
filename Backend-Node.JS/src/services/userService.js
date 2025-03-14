@@ -121,20 +121,60 @@ let updateUser = async (id, data) => {
         if (!user) {
             throw new Error('User not found');
         }
-        let password = data.password;
-        if(password) {
+
+        // Handle password update
+        if (data.password) {
             let salt = bcrypt.genSaltSync(10);
-            data.password = bcrypt.hashSync(password, salt);
+            data.password = bcrypt.hashSync(data.password, salt);
         }
-        let roleID = data.roleID;
-        if(roleID) {
-            data.roleID = `R${roleID === '1' ? '1' : roleID === '0' ? '0' : '2'}`;
+
+        // Handle role update
+        if (data.roleID) {
+            data.roleID = `R${data.roleID === '1' ? '1' : data.roleID === '0' ? '0' : '2'}`;
         }
-        console.log('data in service:',data);
+
+        // Handle image update
+        if (data.image) {
+            try {
+                // Delete old image if exists
+                if (user.image) {
+                    const oldImagePath = path.join(__dirname, '../public', user.image);
+                    if (fs.existsSync(oldImagePath)) {
+                        fs.unlinkSync(oldImagePath);
+                    }
+                }
+
+                // Process and save new image
+                const imageBuffer = Buffer.from(data.image.split(',')[1], 'base64');
+                const fileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}.png`;
+                const uploadPath = path.join(__dirname, '../public/user/images');
+
+                // Create directory if not exists
+                if (!fs.existsSync(uploadPath)) {
+                    fs.mkdirSync(uploadPath, { recursive: true });
+                }
+
+                // Save new image
+                const filePath = path.join(uploadPath, fileName);
+                fs.writeFileSync(filePath, imageBuffer);
+
+                // Update image path in data
+                data.image = `/user/images/${fileName}`;
+            } catch (error) {
+                console.error('Error processing image:', error);
+                throw new Error(`Image processing failed: ${error.message}`);
+            }
+        }
+
         await db.User.update(data, { where: { id: id } });
-        return "Update user successfully";
+        
+        // Get updated user data
+        const updatedUser = await db.User.findOne({ where: { id: id } });
+        const { password, ...userWithoutPassword } = updatedUser.toJSON();
+        
+        return userWithoutPassword;
     } catch (error) {
-        console.log(error);
+        console.error('Error updating user:', error);
         throw error;
     }
 }

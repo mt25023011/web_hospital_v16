@@ -56,6 +56,14 @@ class UserManage extends Component {
       dataFunc: null,
     });
   };
+  handleEditUser=(id)=>{
+    const userToDelete = this.state.users.find(user => user.id === id);
+    if (!userToDelete) {
+      ToastUtil.error("Lỗi", "Người dùng không tồn tại");
+      return;
+    }
+    this.props.history.push(`/system/user-manage/edit/${id}`);
+  }
   
   handleAddUser() {
     this.props.history.push('/system/user-manage/add');
@@ -117,7 +125,7 @@ class UserManage extends Component {
                           {
                             user.roleID === "R0" ? (
                               <span className="badge bg-primary fs-7">Admin</span>
-                            ) : user.role === "R1" ? (
+                            ) : user.roleID === "R1" ? (
                               <span className="badge bg-success fs-7">Doctor</span>
                             ) : (
                               <span className="badge bg-secondary fs-7">Patient</span>
@@ -126,7 +134,7 @@ class UserManage extends Component {
                       </td>
                       <td>
                         <div className="d-flex justify-content-center gap-2">
-                          <button className="btn px-2 fs-7 btn-edit">
+                          <button className="btn px-2 fs-7 btn-edit" onClick={()=>this.handleEditUser(user.id)}>
                             <i className="fas fa-pencil-alt"></i>
                             <span className="mx-2">Edit</span>
                           </button>
