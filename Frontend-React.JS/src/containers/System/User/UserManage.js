@@ -70,10 +70,10 @@ class UserManage extends Component {
           <div className="d-flex justify-content-end">
             <button className="btn btn-primary" onClick={() => this.handleAddUser()}>Add User</button>
           </div>
-          <div className="table-responsive">
+          <div className="table-responsive" style={{maxHeight: "100vh", overflowY: "auto"}}>
             <table className="table table-hover table-bordered">
               <thead className="table-dark text-center">
-                <tr style={{position: "sticky", top: 0}}>
+                <tr style={{position: "sticky", top: 0, zIndex: 1}}>
                   <th scope="col">#</th>
                   <th scope="col">Image</th>
                   <th scope="col">Email</th>
@@ -90,9 +90,9 @@ class UserManage extends Component {
                   return (
                     <tr key={index} className="fs-5">
                       <th scope="row" className="text-center">{index + 1}</th>
-                      <td>
+                      <td className="text-center">
                         <img 
-                          src={user.image ? `${process.env.REACT_APP_BACKEND_URL}${user.image}` : '/default-user-image.png'} 
+                          src={user.image ? `${process.env.REACT_APP_BACKEND_URL}${user.image}` : 'http://localhost:8080/user/images/default.jfif'} 
                           alt="User" 
                           className="img-fluid rounded-circle" 
                           style={{ width: '50px', height: '50px', objectFit: 'cover' }}
