@@ -6,6 +6,7 @@ import ConfirmModal from "../../../components/ConfirmModal";
 import * as actions from "../../../store/actions";
 import { ToastUtil } from "../../../utils";
 import ModelCreateUser from './ModelCreateUser';
+import ModelEditUser from "./ModelEditUser";
 
 class UserManage extends Component {
   constructor(props) {
@@ -13,6 +14,8 @@ class UserManage extends Component {
     this.state = {
       users: [],
       isOpen: false,
+      isOpenEdit: false,
+      currentUser:{},
     };
   }
 
@@ -57,13 +60,9 @@ class UserManage extends Component {
     });
   };
 
-  handleEditUser = (id) => {
-    const userToEdit = this.state.users.find((user) => user.id === id);
-    if (!userToEdit) {
-      ToastUtil.error("Lỗi", "Người dùng không tồn tại");
-      return;
-    }
-    this.props.history.push(`/system/user-manage/edit/${id}`);
+  handleEditUser = (user) => {
+    this.setState({ isOpenEdit: true });
+    this.setState({ currentUser: user });
   };
 
   handleAddUser = () => {
@@ -77,6 +76,12 @@ class UserManage extends Component {
           isOpen={this.state.isOpen}
           toggle={() => this.setState({ isOpen: !this.state.isOpen })}
           refreshUserList={this.fetchUserList}
+        />
+        <ModelEditUser
+          isOpen={this.state.isOpenEdit}
+          toggle={() => this.setState({ isOpenEdit: !this.state.isOpenEdit })}
+          refreshUserList={this.fetchUserList}
+          currentUser={this.state.currentUser}
         />
         <div className="title text-center">Manage Users</div>
         <div className="users-table mt-4 mx-3">
@@ -134,7 +139,7 @@ class UserManage extends Component {
                     </td>
                     <td>
                       <div className="d-flex justify-content-center gap-2">
-                        <button className="btn px-2 fs-7 btn-edit" onClick={() => this.handleEditUser(user.id)}>
+                        <button className="btn px-2 fs-7 btn-edit" onClick={() => this.handleEditUser(user)}>
                           <i className="fas fa-pencil-alt"></i>
                           <span className="mx-2">Edit</span>
                         </button>
