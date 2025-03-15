@@ -4,7 +4,6 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import UserManage from '../containers/System/User/UserManage';
 import ProductManage from '../containers/System/ProductManage';
 import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
-import EditUser from '../containers/System/User/EditUser';
 
 class System extends Component {
     render() {
