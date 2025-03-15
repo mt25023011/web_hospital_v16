@@ -6,6 +6,7 @@ import './UserManage.scss';
 import ConfirmModal from '../../../components/ConfirmModal';
 import * as actions from '../../../store/actions';
 import { ToastUtil } from '../../../utils';
+import ModelCreateUser from './ModelCreateUser';
 
 class UserManage extends Component {
   state = {};
@@ -66,13 +67,16 @@ class UserManage extends Component {
   }
   
   handleAddUser() {
-    this.props.history.push('/system/user-manage/add');
+    this.setState({
+      isOpen: true,
+    });
   }
   
 
   render() {
     return (
       <div className="users-container">
+        <ModelCreateUser isOpen={this.state.isOpen} toggle={() => this.setState({isOpen: !this.state.isOpen})} />
         <div className="title text-center">Manage Users</div>
         <div className="users-table mt-4 mx-3">
           <div className="d-flex justify-content-end">

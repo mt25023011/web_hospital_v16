@@ -8,17 +8,17 @@ class CreateUser extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: "",
-            password: "",
-            firstName: "",
-            lastName: "",
-            phoneNumber: "",
-            address: "",
-            roleID: 2,
-            gender: 0,
-            image: null,
-            imagePreviewUrl: null,
-            errMessage: "",
+                email: "",
+                password: "",
+                firstName: "",
+                lastName: "",
+                phoneNumber: "",
+                address: "",
+                roleID: 2,
+                gender: 0,
+                image: null,
+                imagePreviewUrl: null,
+                errMessage: "",
         };
     }
 
