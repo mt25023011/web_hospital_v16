@@ -190,20 +190,22 @@
                 
                 .option-child-icon {
                     background: white;
-                    width: 50px;
-                    height: 50px;
-                    padding: 10px;
+                    width: 50px; /* Tăng kích thước */
+                    height: 50px; /* Tăng kích thước */
+                    padding: 15px; /* Điều chỉnh padding */
                     border-radius: 50%;
                     margin: 0 auto;
                     text-align: center;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Bóng đổ mềm hơn */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     color: blue;
                     
-                    i {
+                    .option-child-icon-icon {
                         color: #45c3d2;
-                        font-size: 25px;
-                        transition: all 0.2s ease;
+                        transition: all 0.3s ease;
                     }
                 }
                 .option-child-text {

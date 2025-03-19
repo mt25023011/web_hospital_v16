@@ -5,7 +5,7 @@ import { languages } from '../../utils/constant';
 import { changeLanguageApp } from '../../store/actions';
 import './Home.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars,faQuestionCircle,faHospital,faSearch, faPhone, faBed, faUserAlt, faTooth, faMicroscope } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faQuestionCircle, faHospital, faSearch, faPhone, faBed, faUserAlt, faTooth, faMicroscope } from '@fortawesome/free-solid-svg-icons';
 
 class HomeHeader extends Component {
     changeLanguage = (language) => {
@@ -24,35 +24,35 @@ class HomeHeader extends Component {
                         </div>
                         <div className='center-content'>
                             <div className='child-content'>
-                                <div><b><FormattedMessage id="homeheader.speciality"/></b></div>
-                                <div className='sub-title'><FormattedMessage id="homeheader.searchdoctor"/></div>
+                                <div><b><FormattedMessage id="homeheader.speciality" /></b></div>
+                                <div className='sub-title'><FormattedMessage id="homeheader.searchdoctor" /></div>
                             </div>
                             <div className='child-content'>
-                                <div><b><FormattedMessage id="homeheader.health-facility"/></b></div>
-                                <div className='sub-title'><FormattedMessage id="homeheader.select-room"/></div>
+                                <div><b><FormattedMessage id="homeheader.health-facility" /></b></div>
+                                <div className='sub-title'><FormattedMessage id="homeheader.select-room" /></div>
                             </div>
                             <div className='child-content'>
-                                <div><b><FormattedMessage id="homeheader.doctor"/></b></div>
-                                <div className='sub-title'><FormattedMessage id="homeheader.select-doctor"/></div>
+                                <div><b><FormattedMessage id="homeheader.doctor" /></b></div>
+                                <div className='sub-title'><FormattedMessage id="homeheader.select-doctor" /></div>
                             </div>
                             <div className='child-content'>
-                                <div><b><FormattedMessage id="homeheader.fee"/></b></div>
-                                <div className='sub-title'><FormattedMessage id="homeheader.check-health"/></div>
+                                <div><b><FormattedMessage id="homeheader.fee" /></b></div>
+                                <div className='sub-title'><FormattedMessage id="homeheader.check-health" /></div>
                             </div>
                         </div>
                         <div className='right-content'>
                             <div className='support'>
                                 <FontAwesomeIcon className='f-question-icon' icon={faQuestionCircle} />
-                                <FormattedMessage id="homeheader.support"/>
+                                <FormattedMessage id="homeheader.support" />
                             </div>
                             <div className='language-switch'>
-                                <span 
+                                <span
                                     className={language === languages.VI ? 'language-vi active' : 'language-vi'}
                                     onClick={() => this.changeLanguage(languages.VI)}
                                 >
                                     VN
                                 </span>
-                                <span 
+                                <span
                                     className={language === languages.EN ? 'language-en active' : 'language-en'}
                                     onClick={() => this.changeLanguage(languages.EN)}
                                 >
@@ -64,38 +64,38 @@ class HomeHeader extends Component {
                 </div>
                 <div className="home-header-banner">
                     <div className='content-up'>
-                        <div className="title1"><FormattedMessage id="banner.title1"/></div>
-                        <div className="title2"><FormattedMessage id="banner.title2"/></div>
+                        <div className="title1"><FormattedMessage id="banner.title1" /></div>
+                        <div className="title2"><FormattedMessage id="banner.title2" /></div>
                         <div className="search">
-                            <FontAwesomeIcon className='search-icon'  icon={faSearch} /> 
+                            <FontAwesomeIcon className='search-icon' icon={faSearch} />
                             <input type="text" placeholder={this.props.language === languages.VI ? "Tìm chuyên khoa khám bệnh" : "Find a medical specialty"} />
                         </div>
                     </div>
                     <div className='content-down'>
                         <div className="option">
                             <div className='option-child'>
-                                <div className='option-child-icon'> <FontAwesomeIcon icon={faHospital} /></div>
-                                <div className='option-child-text'><FormattedMessage id="banner.child1"/></div>
+                                <div className='option-child-icon'> <FontAwesomeIcon className='option-child-icon' icon={faHospital} /></div>
+                                <div className='option-child-text'><FormattedMessage id="banner.child1" /></div>
                             </div>
                             <div className='option-child'>
-                                <div className='option-child-icon'> <FontAwesomeIcon icon={faPhone} /></div>
-                                <div className='option-child-text'><FormattedMessage id="banner.child2"/></div>
+                                <div className='option-child-icon'> <FontAwesomeIcon className='option-child-icon' icon={faPhone} /></div>
+                                <div className='option-child-text'><FormattedMessage id="banner.child2" /></div>
                             </div>
                             <div className='option-child'>
-                                <div className='option-child-icon'> <FontAwesomeIcon icon={faBed} /></div>
-                                <div className='option-child-text'><FormattedMessage id="banner.child3"/></div>
+                                <div className='option-child-icon'> <FontAwesomeIcon className='option-child-icon' icon={faBed} /></div>
+                                <div className='option-child-text'><FormattedMessage id="banner.child3" /></div>
                             </div>
                             <div className='option-child'>
-                                <div className='option-child-icon'> <FontAwesomeIcon icon={faMicroscope} /></div>
-                                <div className='option-child-text'><FormattedMessage id="banner.child4"/></div>
+                                <div className='option-child-icon'> <FontAwesomeIcon className='option-child-icon' icon={faMicroscope} /></div>
+                                <div className='option-child-text'><FormattedMessage id="banner.child4" /></div>
                             </div>
                             <div className='option-child'>
-                                <div className='option-child-icon'> <FontAwesomeIcon icon={faUserAlt} /></div>
-                                <div className='option-child-text'><FormattedMessage id="banner.child5"/></div>
+                                <div className='option-child-icon'> <FontAwesomeIcon className='option-child-icon' icon={faUserAlt} /></div>
+                                <div className='option-child-text'><FormattedMessage id="banner.child5" /></div>
                             </div>
                             <div className='option-child'>
-                                <div className='option-child-icon'> <FontAwesomeIcon icon={faTooth} /></div>
-                                <div className='option-child-text'><FormattedMessage id="banner.child6"/></div>
+                                <div className='option-child-icon'> <FontAwesomeIcon className='option-child-icon' icon={faTooth} /></div>
+                                <div className='option-child-text'><FormattedMessage id="banner.child6" /></div>
                             </div>
                         </div>
                     </div>
