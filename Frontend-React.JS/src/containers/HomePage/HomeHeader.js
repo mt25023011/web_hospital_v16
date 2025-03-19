@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { FormattedMessage } from 'react-intl';
 import { languages } from '../../utils/constant';
 import { changeLanguageApp } from '../../store/actions';
-import './HomeHeader.scss';
+import './Home.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars,faQuestionCircle,faHospital,faSearch, faPhone, faBed, faUserAlt, faTooth, faMicroscope } from '@fortawesome/free-solid-svg-icons';
 
