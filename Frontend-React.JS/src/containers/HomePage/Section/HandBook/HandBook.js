@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import './MedicalFacility.scss';
+import '../MedicalFacility/MedicalFacility.scss';
 import Slider from "react-slick";
 // Import css files
 import "slick-carousel/slick/slick.css";
@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import images from '../../../../assets/MedicalFacility';
 
-class MedicalFacility extends Component {
+class HandBook extends Component {
 
     render() {
         const CustomArrow = ({ direction, onClick }) => (
@@ -33,19 +33,19 @@ class MedicalFacility extends Component {
         };
 
         const specialties = [
+            { image: images.bvChoray, title: 'Top 8 bệnh viện, phòng khám Tai mũi họng nhi Hà Nội uy tín' },
+            { image: images.bvChoray, title: 'Top 7 Bác sĩ khám Tai Mũi Họng giỏi, mát tay Hà Nội (phần 2)' },
+            { image: images.bvChoray, title: 'B7 địa chỉ khám chữa bệnh Tai Mũi Họng tốt tại TPHCM (Phần 1)' },
+            { image: images.bvChoray, title: 'Top 8 Bác sĩ Tai Mũi Họng giỏi ở Hà Nội (Phần 1)' },
             { image: images.bvChoray, title: 'Bệnh viện Chợ Rẫy' },
-            { image: images.hungViet, title: 'Bệnh viện Ung bướu Hưng Việt' },
-            { image: images.medtaiHN, title: 'Hệ thống y tế MEDLATEC' },
-            { image: images.yDuoc, title: 'Phòng khám Bệnh viện Đại học Y Dược 1' },
-            { image: images.vietDuc, title: 'Bệnh viện Hữu nghị Việt Đức' },
-            { image: images.doctorCheck, title: 'Doctor Check - Tầm Soát Bệnh Để Sống Thọ Hơn' }
+            { image: images.bvChoray, title: 'Bệnh viện Chợ Rẫy' },
         ];
 
         return (
             <div className='MedicalFacility-container'>
                 <div className='MedicalFacility-header'>
                     <div className='MedicalFacility-header-title'>
-                        <span>Cơ sở y tế</span>
+                        <span>Cẩm nang</span>
                     </div>
                     <div className='MedicalFacility-header-view-more'>
                         <button className='MedicalFacility-header-view-more-button'>Xem thêm</button>
@@ -76,4 +76,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MedicalFacility);
+export default connect(mapStateToProps, mapDispatchToProps)(HandBook);

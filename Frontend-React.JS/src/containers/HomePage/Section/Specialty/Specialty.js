@@ -54,7 +54,7 @@ class Specialty extends Component {
                     <Slider {...settings}>
                         {specialties.map((specialty, index) => (
                             <div key={index} className="specialty-item">
-                                <img src={specialty.image} alt={specialty.title} />
+                                <img src={specialty.image} style={{ width: '100%', height: '200px' }} alt={specialty.title} />
                                 <span>{specialty.title}</span>
                             </div>
                         ))}
