@@ -10,9 +10,6 @@ import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import images from '../../../../assets/MedicalFacility';
 
 class MedicalFacility extends Component {
-    changeLanguage = (language) => {
-        this.props.changeLanguageAppRedux(language);
-    }
 
     render() {
         const CustomArrow = ({ direction, onClick }) => (
