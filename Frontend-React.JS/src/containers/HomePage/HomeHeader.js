@@ -100,6 +100,7 @@ class HomeHeader extends Component {
                         </div>
                     </div>
                 </div>
+                <div>xin chao</div>
             </React.Fragment>
         );
     }
