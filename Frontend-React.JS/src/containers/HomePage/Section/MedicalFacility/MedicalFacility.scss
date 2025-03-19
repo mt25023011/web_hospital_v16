@@ -1,9 +1,9 @@
-.specialty-container {
+.MedicalFacility-container {
     padding: 40px 0;
     background: #f5f5f5;
     min-height: 330px;
     
-    .specialty-header {
+    .MedicalFacility-header {
         padding: 0 50px;
         margin-bottom: 30px;
         display: flex;
@@ -16,9 +16,9 @@
             color: #333;
         }
         
-        .specialty-header-view-more {
+        .MedicalFacility-header-view-more {
             button {
-                background: #45c3d2;
+                background: #45d268;
                 color: #fff;
                 border: none;
                 padding: 10px 20px;
@@ -27,7 +27,7 @@
                 cursor: pointer;
                 
                 &:hover {
-                    background: yellow;
+                    background: red;
                     color: #333;
                     transform: translateY(-2px);
                     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -36,13 +36,13 @@
         }
     }
 
-    .specialty-content {
+    .MedicalFacility-content {
         padding: 0 50px;
         
         .slick-slider {
             position: relative;
             
-            .specialty-item {
+            .MedicalFacility-item {
                 padding: 10px;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -133,10 +133,10 @@
 
 // Responsive styles
 @media screen and (max-width: 768px) {
-    .specialty-container {
+    .MedicalFacility-container {
         padding: 20px 0;
         
-        .specialty-header {
+        .MedicalFacility-header {
             padding: 0 20px;
             margin-bottom: 20px;
             
@@ -144,7 +144,7 @@
                 font-size: 20px;
             }
             
-            .specialty-header-view-more {
+            .MedicalFacility-header-view-more {
                 button {
                     padding: 8px 16px;
                     font-size: 14px;
@@ -152,11 +152,11 @@
             }
         }
         
-        .specialty-content {
+        .MedicalFacility-content {
             padding: 0 20px;
             
             .slick-slider {
-                .specialty-item {
+                .MedicalFacility-item {
                     img {
                         height: 120px;
                     }

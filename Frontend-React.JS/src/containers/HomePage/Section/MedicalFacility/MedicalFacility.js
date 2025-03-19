@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import './Specialty.scss';
+import './MedicalFacility.scss';
 import Slider from "react-slick";
 // Import css files
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import images from '../../../../assets/Specialty';
+import images from '../../../../assets/MedicalFacility';
 
-class Specialty extends Component {
+class MedicalFacility extends Component {
     changeLanguage = (language) => {
         this.props.changeLanguageAppRedux(language);
     }
@@ -36,30 +36,30 @@ class Specialty extends Component {
         };
 
         const specialties = [
-            { image: images.coXuongKhop, title: 'Cơ xương khớp' },
-            { image: images.timMach, title: 'Tim mạch' },
-            { image: images.taiMuiHong, title: 'Tai mũi họng' },
-            { image: images.tieuHoa, title: 'Tiêu hóa' },
-            { image: images.thanKinh, title: 'Thần kinh' },
-            { image: images.cotSong, title: 'Cột sống' }
+            { image: images.bvChoray, title: 'Bệnh viện Chợ Rẫy' },
+            { image: images.hungViet, title: 'Bệnh viện Ung bướu Hưng Việt' },
+            { image: images.medtaiHN, title: 'Hệ thống y tế MEDLATEC' },
+            { image: images.yDuoc, title: 'Phòng khám Bệnh viện Đại học Y Dược 1' },
+            { image: images.vietDuc, title: 'Bệnh viện Hữu nghị Việt Đức' },
+            { image: images.doctorCheck, title: 'Doctor Check - Tầm Soát Bệnh Để Sống Thọ Hơn' }
         ];
 
         return (
-            <div className='specialty-container'>
-                <div className='specialty-header'>
-                    <div className='specialty-header-title'>
-                        <span>Chuyên khoa phổ biến</span>
+            <div className='MedicalFacility-container'>
+                <div className='MedicalFacility-header'>
+                    <div className='MedicalFacility-header-title'>
+                        <span>Cơ sở y tế</span>
                     </div>
-                    <div className='specialty-header-view-more'>
-                        <button className='specialty-header-view-more-button'>Xem thêm</button>
+                    <div className='MedicalFacility-header-view-more'>
+                        <button className='MedicalFacility-header-view-more-button'>Xem thêm</button>
                     </div>
                 </div>
-                <div className='specialty-content'>
+                <div className='MedicalFacility-content'>
                     <Slider {...settings}>
-                        {specialties.map((specialty, index) => (
-                            <div key={index} className="specialty-item">
-                                <img src={specialty.image} alt={specialty.title} />
-                                <span>{specialty.title}</span>
+                        {specialties.map((MedicalFacility, index) => (
+                            <div key={index} className="MedicalFacility-item">
+                                <img src={MedicalFacility.image} alt={MedicalFacility.title} />
+                                <span>{MedicalFacility.title}</span>
                             </div>
                         ))}
                     </Slider>
@@ -79,4 +79,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Specialty);
+export default connect(mapStateToProps, mapDispatchToProps)(MedicalFacility);
