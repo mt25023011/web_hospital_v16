@@ -26,3 +26,7 @@ export const YesNoObj = {
     YES: 'Y',
     NO: 'N'
 }
+export const LANGUAGES = {
+    VI: 'vi',
+    EN: 'en'
+}

@@ -8,14 +8,60 @@
     color: $common-text-color;
     height: 40px;
     position: relative;
+
+    // Header tabs container (for navigation)
+    .header-tabs-container {
+        display: flex;
+        align-items: center;
+    }
+
+    // Right section of the header (language and logout)
+    .header-right-container {
+        display: flex;
+        align-items: center;
+    }
+
+    // Language selector section
+    .language {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+
+        // Language items (VN/EN)
+        .language-item {
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: $base-size;
+            transition: background-color 0.3s ease; // Smooth transition for hover
+
+            &:hover {
+                background-color: darken($colormain, 10%);
+            }        
+            &.active {
+                opacity: 1;
+                color: rgb(224, 57, 155) !important; // Ensure active language item stands out
+            }
+        }
+
+        // Special margin for the 'VN' item
+        .language-vi {
+            margin-right: 10px;
+        }
+    }
+
+    // Logout button
     .btn-logout {
         color: $common-text-color;
         line-height: 40px;
         height: 40px;
         padding: 0 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; // Smooth transition for hover
+
         &:hover {
-            background-color: darken($colormain, 5);
+            background-color: darken($colormain, 5%);
         }
+
         i {
             font-size: $base-size + 1px;
         }

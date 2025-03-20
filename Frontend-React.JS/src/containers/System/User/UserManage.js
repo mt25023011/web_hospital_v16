@@ -7,6 +7,7 @@ import * as actions from "../../../store/actions";
 import { ToastUtil } from "../../../utils";
 import ModelCreateUser from './ModelCreateUser';
 import ModelEditUser from "./ModelEditUser";
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 class UserManage extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class UserManage extends Component {
       users: [],
       isOpen: false,
       isOpenEdit: false,
-      currentUser:{},
+      currentUser: {},
     };
   }
 
@@ -40,21 +41,35 @@ class UserManage extends Component {
       return;
     }
 
+    const { intl } = this.props; // Ensure intl is available
+
+    if (!intl) {
+      console.error('intl is not available');
+      return;
+    }
+
+    // Use intl.formatMessage to get the string values
+    const successMessage = intl.formatMessage({ id: "common.success" });
+    const errorMessage = intl.formatMessage({ id: "common.error" });
+    const userCreationSuccessMessage = intl.formatMessage({ id: "system.user-manage.del-user-success" });
+    const userCreationFailMessage = intl.formatMessage({ id: "system.user-manage.del-user-fail" });
+    const sureDeleteUserMessage = intl.formatMessage({ id: "system.user-manage.sure-delete-user" });
+
     this.props.setContentOfConfirmModal({
       isOpen: true,
-      messageId: `Bạn có chắc chắn muốn xóa người dùng ${userToDelete.firstName} ${userToDelete.lastName}?`,
+      messageId: sureDeleteUserMessage,
       status: "danger",
       handleFunc: () => {
         userService.deleteUser(id).then((res) => {
           if (res) {
-            ToastUtil.success("Thành công", "Xóa người dùng thành công");
+            ToastUtil.success(successMessage, userCreationSuccessMessage);
             this.fetchUserList(); // Refresh the user list after deleting
           } else {
-            ToastUtil.error("Lỗi", "Xóa người dùng thất bại");
+            ToastUtil.error(errorMessage, userCreationFailMessage);
           }
         }).catch((error) => {
           console.log("Error deleting user:", error);
-          ToastUtil.error("Lỗi", "Có lỗi xảy ra khi xóa người dùng");
+          ToastUtil.error(errorMessage, userCreationFailMessage);
         });
       },
     });
@@ -83,11 +98,14 @@ class UserManage extends Component {
           refreshUserList={this.fetchUserList}
           currentUser={this.state.currentUser}
         />
-        <div className="title text-center">Manage Users</div>
+        <ConfirmModal /> {/* Ensure this is rendered */}
+        <div className="title text-center">
+          <FormattedMessage id="system.user-manage.manage-users" />
+        </div>
         <div className="users-table mt-4 mx-3">
           <div className="d-flex justify-content-end">
             <button className="btn btn-primary" onClick={this.handleAddUser}>
-              Add User
+              <FormattedMessage id="system.user-manage.add-user" />
             </button>
           </div>
           <div className="table-responsive" style={{ maxHeight: "100vh", overflowY: "auto" }}>
@@ -95,14 +113,14 @@ class UserManage extends Component {
               <thead className="table-dark text-center">
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Image</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Full Name</th>
-                  <th scope="col">Address</th>
-                  <th scope="col">Phone Number</th>
-                  <th scope="col">Gender</th>
-                  <th scope="col">Role</th>
-                  <th scope="col">Action</th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.image" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.email" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.fullname" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.address" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.phone-number" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.gender" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.role" /></th>
+                  <th scope="col"><FormattedMessage id="system.user-manage.action" /></th>
                 </tr>
               </thead>
               <tbody>
@@ -123,29 +141,29 @@ class UserManage extends Component {
                     <td>{user.phoneNumber}</td>
                     <td className="text-center">
                       {user.gender === 1 ? (
-                        <span className="badge bg-primary fs-7">Male</span>
+                        <span className="badge bg-primary fs-7"><FormattedMessage id="system.user-manage.male" /></span>
                       ) : (
-                        <span className="badge bg-success fs-7">Female</span>
+                        <span className="badge bg-success fs-7"><FormattedMessage id="system.user-manage.female" /></span>
                       )}
                     </td>
                     <td className="text-center">
                       {user.roleID === "R0" ? (
-                        <span className="badge bg-primary fs-7">Admin</span>
+                        <span className="badge bg-primary fs-7"><FormattedMessage id="system.user-manage.admin" /></span>
                       ) : user.roleID === "R1" ? (
-                        <span className="badge bg-success fs-7">Doctor</span>
+                        <span className="badge bg-success fs-7"><FormattedMessage id="system.user-manage.doctor" /></span>
                       ) : (
-                        <span className="badge bg-secondary fs-7">Patient</span>
+                        <span className="badge bg-secondary fs-7"><FormattedMessage id="system.user-manage.patient" /></span>
                       )}
                     </td>
                     <td>
                       <div className="d-flex justify-content-center gap-2">
                         <button className="btn px-2 fs-7 btn-edit" onClick={() => this.handleEditUser(user)}>
                           <i className="fas fa-pencil-alt"></i>
-                          <span className="mx-2">Edit</span>
+                          <span className="mx-2"><FormattedMessage id="system.user-manage.edit" /></span>
                         </button>
                         <button className="btn px-2 fs-7 btn-delete" onClick={() => this.handleDeleteUser(user.id)}>
                           <i className="fas fa-trash-alt"></i>
-                          <span className="mx-2">Delete</span>
+                          <span className="mx-2"><FormattedMessage id="system.user-manage.delete" /></span>
                         </button>
                       </div>
                     </td>
@@ -160,12 +178,8 @@ class UserManage extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  // mapStateToProps logic here
-});
-
 const mapDispatchToProps = (dispatch) => ({
   setContentOfConfirmModal: (contentOfConfirmModal) => dispatch(actions.setContentOfConfirmModal(contentOfConfirmModal)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserManage);
+export default injectIntl(connect(null, mapDispatchToProps)(UserManage)); // Wrap with injectIntl

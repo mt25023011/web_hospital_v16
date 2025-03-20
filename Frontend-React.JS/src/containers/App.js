@@ -44,7 +44,6 @@ class App extends Component {
       <Fragment>
         <Router history={history}>
           <div className="main-container">
-            {this.props.isLoggedIn && <Header />}
             <CustomScrollbars style={{ height: "calc(100vh - 60px)", width: "100%" }}>
               <div className="content-container">
                 <Switch>
@@ -83,7 +82,6 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     started: state.app.started,
-    isLoggedIn: state.user.isLoggedIn,
   };
 };
 

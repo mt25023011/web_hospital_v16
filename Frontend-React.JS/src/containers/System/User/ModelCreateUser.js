@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { FormattedMessage } from "react-intl";
 import { Modal, Button, ModalFooter, ModalHeader, ModalBody } from "reactstrap";
 import { userService } from "../../../services";
+import { FormattedMessage } from 'react-intl';
+import { ToastUtil } from "../../../utils";
+import { injectIntl } from 'react-intl';
 
 class ModelCreateUser extends Component {
   constructor(props) {
@@ -76,7 +78,7 @@ class ModelCreateUser extends Component {
     // Basic validation
     if (email === "" || password === "" || firstName === "" || lastName === "" || phoneNumber === "") {
       this.setState({
-        errMessage: "Please fill all fields",
+        errMessage: <FormattedMessage id="system.user-manage.invalid-input" />,
       });
       return;
     }
@@ -102,8 +104,14 @@ class ModelCreateUser extends Component {
     // Call the userService to create the user
     userService.createUser(data)
       .then(response => {
-        console.log('Response from createUser:', response);
-        alert('User created successfully!');
+        const { intl } = this.props; // Get intl object
+
+        // Use intl.formatMessage to get the string values
+        const successMessage = intl.formatMessage({ id: "common.success" });
+        const userCreationSuccessMessage = intl.formatMessage({ id: "system.user-manage.add-user-success" });
+
+        // Show success toast with formatted messages
+        ToastUtil.success(successMessage, userCreationSuccessMessage);
         
         // Reset form and close the modal after success
         this.resetForm();
@@ -113,7 +121,7 @@ class ModelCreateUser extends Component {
       .catch(error => {
         console.error('Error creating user:', error);
         this.setState({
-          errMessage: error.response?.data?.message || 'Error creating user',
+          errMessage: error.response?.data?.message || <FormattedMessage id="system.user-manage.add-user-fail" />,
         });
       });
   };
@@ -123,7 +131,7 @@ class ModelCreateUser extends Component {
       <Modal isOpen={this.props.isOpen} toggle={() => this.toggle()} size="lg">
         <ModalHeader toggle={() => this.toggle()}>
           <i className="fas fa-user-plus me-2"></i>
-          Create New User
+          <FormattedMessage id="system.user-manage.add-user" />
         </ModalHeader>
         <ModalBody>
           <div className="container-fluid">
@@ -139,7 +147,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-6 mb-3">
                   <label htmlFor="email" className="form-label">
                     <i className="fas fa-envelope me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.email" defaultMessage="Email" />
+                    <FormattedMessage id="system.user-manage.email" defaultMessage="Email" />
                   </label>
                   <input
                     type="email"
@@ -154,7 +162,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-6 mb-3">
                   <label htmlFor="password" className="form-label">
                     <i className="fas fa-lock me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.password" defaultMessage="Password" />
+                    <FormattedMessage id="system.user-manage.password" defaultMessage="Password" />
                   </label>
                   <input
                     type="password"
@@ -169,7 +177,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-6 mb-3">
                   <label htmlFor="firstName" className="form-label">
                     <i className="fas fa-user me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.firstName" defaultMessage="First Name" />
+                    <FormattedMessage id="system.user-manage.firstname" defaultMessage="First Name" />
                   </label>
                   <input
                     type="text"
@@ -184,7 +192,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-6 mb-3">
                   <label htmlFor="lastName" className="form-label">
                     <i className="fas fa-user me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.lastName" defaultMessage="Last Name" />
+                    <FormattedMessage id="system.user-manage.lastname" defaultMessage="Last Name" />
                   </label>
                   <input
                     type="text"
@@ -199,7 +207,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-4 mb-3">
                   <label htmlFor="phoneNumber" className="form-label">
                     <i className="fas fa-phone me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.phoneNumber" defaultMessage="Phone" />
+                    <FormattedMessage id="system.user-manage.phone-number" defaultMessage="Phone" />
                   </label>
                   <input
                     type="text"
@@ -215,7 +223,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-4 mb-3">
                   <label htmlFor="address" className="form-label">
                     <i className="fas fa-map-marker-alt me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.address" defaultMessage="Address" />
+                    <FormattedMessage id="system.user-manage.address" defaultMessage="Address" />
                   </label>
                   <input
                     type="text"
@@ -231,7 +239,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-2 mb-3">
                   <label htmlFor="gender" className="form-label fw-bold">
                     <i className="fas fa-venus-mars me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.gender" defaultMessage="Gender" />
+                    <FormattedMessage id="system.user-manage.gender" defaultMessage="Gender" />
                   </label>
                   <select
                     id="gender"
@@ -240,10 +248,10 @@ class ModelCreateUser extends Component {
                     value={this.state.gender}
                     onChange={(event) => this.handleOnChangeInput(event, 'gender')}
                   >
-                    <FormattedMessage id="createUser.gender.male" defaultMessage="Male">
+                    <FormattedMessage id="system.user-manage.male">
                       {(text) => <option value="1">{text}</option>}
                     </FormattedMessage>
-                    <FormattedMessage id="createUser.gender.female" defaultMessage="Female">
+                    <FormattedMessage id="system.user-manage.female" >
                       {(text) => <option value="0">{text}</option>}
                     </FormattedMessage>
                   </select>
@@ -252,7 +260,7 @@ class ModelCreateUser extends Component {
                 <div className="col-md-2 mb-3">
                   <label htmlFor="role" className="form-label fw-bold">
                     <i className="fas fa-user-tag me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.role" defaultMessage="Role" />
+                    <FormattedMessage id="system.user-manage.role" defaultMessage="Role" />
                   </label>
                   <select
                     id="role"
@@ -261,13 +269,13 @@ class ModelCreateUser extends Component {
                     value={this.state.roleID}
                     onChange={(event) => this.handleOnChangeInput(event, 'roleID')}
                   >
-                    <FormattedMessage id="createUser.role.admin" defaultMessage="Admin">
+                    <FormattedMessage id="system.user-manage.admin">
                       {(text) => <option value="0">{text}</option>}
                     </FormattedMessage>
-                    <FormattedMessage id="createUser.role.user" defaultMessage="Doctor">
+                    <FormattedMessage id="system.user-manage.doctor">
                       {(text) => <option value="1">{text}</option>}
                     </FormattedMessage>
-                    <FormattedMessage id="createUser.role.user" defaultMessage="Patient">
+                    <FormattedMessage id="system.user-manage.patient">
                       {(text) => <option value="2">{text}</option>}
                     </FormattedMessage>
                   </select>
@@ -276,7 +284,7 @@ class ModelCreateUser extends Component {
                 <div className="col-12 mb-3">
                   <label htmlFor="image" className="form-label fw-bold">
                     <i className="fas fa-image me-2 text-primary"></i>
-                    <FormattedMessage id="createUser.image" defaultMessage="Image" />
+                    <FormattedMessage id="system.user-manage.image" defaultMessage="Image" />
                   </label>
                   <div className="d-flex align-items-center gap-3">
                     <input
@@ -297,11 +305,11 @@ class ModelCreateUser extends Component {
         <ModalFooter>
           <Button color="secondary" onClick={this.toggle}>
             <i className="fas fa-times me-2"></i>
-            Close
+            <FormattedMessage id="system.user-manage.close" />
           </Button>
           <Button color="primary" onClick={this.handleCreateUser}>
             <i className="fas fa-save me-2"></i>
-            Save
+            <FormattedMessage id="system.user-manage.save" />
           </Button>
         </ModalFooter>
       </Modal>
@@ -309,4 +317,4 @@ class ModelCreateUser extends Component {
   }
 }
 
-export default ModelCreateUser;
+export default injectIntl(ModelCreateUser);

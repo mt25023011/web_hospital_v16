@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FormattedMessage } from 'react-intl';
 import { userService } from '../../../services';
+import { toast } from 'react-toastify';
 
 class ModelEditUser extends Component {
     constructor(props) {
@@ -94,12 +95,14 @@ class ModelEditUser extends Component {
 
         try {
             // Call the service to update user info
-            const response = await userService.updateUser( userData);
+            const response = await userService.updateUser(userData);
             console.log('User updated successfully:', response);
+            toast.success(<FormattedMessage id="system.user-manage.edit-user-success" />);
             this.props.refreshUserList();  // Fetch users after successful update
             this.props.toggle();  // Close the modal after successful update
         } catch (error) {
             console.error('Error updating user:', error);
+            toast.error(<FormattedMessage id="system.user-manage.edit-user-fail" />);
             this.setState({ errMessage: "Error updating user data" });
         }
     };
@@ -114,7 +117,7 @@ class ModelEditUser extends Component {
             <Modal isOpen={this.props.isOpen} toggle={this.toggle} size="lg">
                 <ModalHeader toggle={this.toggle}>
                     <i className="fas fa-user-plus me-2"></i>
-                    <FormattedMessage id="user.edit" defaultMessage="Edit User" />
+                    <FormattedMessage id="system.user-manage.edit-user" />
                 </ModalHeader>
                 <ModalBody>
                     <div className="container-fluid">
@@ -130,7 +133,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-6 mb-3">
                                     <label htmlFor="email" className="form-label">
                                         <i className="fas fa-envelope me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.email" defaultMessage="Email" />
+                                        <FormattedMessage id="system.user-manage.email" />
                                     </label>
                                     <input
                                         type="email"
@@ -145,7 +148,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-6 mb-3">
                                     <label htmlFor="firstName" className="form-label">
                                         <i className="fas fa-user me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.firstName" defaultMessage="First Name" />
+                                        <FormattedMessage id="system.user-manage.firstname" />
                                     </label>
                                     <input
                                         type="text"
@@ -160,7 +163,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-6 mb-3">
                                     <label htmlFor="lastName" className="form-label">
                                         <i className="fas fa-user me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.lastName" defaultMessage="Last Name" />
+                                        <FormattedMessage id="system.user-manage.lastname" />
                                     </label>
                                     <input
                                         type="text"
@@ -175,7 +178,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="phoneNumber" className="form-label">
                                         <i className="fas fa-phone me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.phoneNumber" defaultMessage="Phone" />
+                                        <FormattedMessage id="system.user-manage.phone-number" />
                                     </label>
                                     <input
                                         type="text"
@@ -191,7 +194,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-4 mb-3">
                                     <label htmlFor="address" className="form-label">
                                         <i className="fas fa-map-marker-alt me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.address" defaultMessage="Address" />
+                                        <FormattedMessage id="system.user-manage.address" />
                                     </label>
                                     <input
                                         type="text"
@@ -207,7 +210,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-2 mb-3">
                                     <label htmlFor="gender" className="form-label fw-bold">
                                         <i className="fas fa-venus-mars me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.gender" defaultMessage="Gender" />
+                                        <FormattedMessage id="system.user-manage.gender" />
                                     </label>
                                     <select
                                         id="gender"
@@ -216,10 +219,10 @@ class ModelEditUser extends Component {
                                         value={this.state.gender}
                                         onChange={(event) => this.handleOnChangeInput(event, 'gender')}
                                     >
-                                        <FormattedMessage id="createUser.gender.male" defaultMessage="Male">
+                                        <FormattedMessage id="system.user-manage.male">
                                             {(text) => <option value="1">{text}</option>}
                                         </FormattedMessage>
-                                        <FormattedMessage id="createUser.gender.female" defaultMessage="Female">
+                                        <FormattedMessage id="system.user-manage.female">
                                             {(text) => <option value="0">{text}</option>}
                                         </FormattedMessage>
                                     </select>
@@ -228,7 +231,7 @@ class ModelEditUser extends Component {
                                 <div className="col-md-2 mb-3">
                                     <label htmlFor="role" className="form-label fw-bold">
                                         <i className="fas fa-user-tag me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.role" defaultMessage="Role" />
+                                        <FormattedMessage id="system.user-manage.role" />
                                     </label>
                                     <select
                                         id="role"
@@ -237,13 +240,13 @@ class ModelEditUser extends Component {
                                         value={this.state.roleID}
                                         onChange={(event) => this.handleOnChangeInput(event, 'roleID')}
                                     >
-                                        <FormattedMessage id="createUser.role.admin" defaultMessage="Admin">
+                                        <FormattedMessage id="system.user-manage.admin">
                                             {(text) => <option value="0">{text}</option>}
                                         </FormattedMessage>
-                                        <FormattedMessage id="createUser.role.user" defaultMessage="Doctor">
+                                        <FormattedMessage id="system.user-manage.doctor">
                                             {(text) => <option value="1">{text}</option>}
                                         </FormattedMessage>
-                                        <FormattedMessage id="createUser.role.patient" defaultMessage="Patient">
+                                        <FormattedMessage id="system.user-manage.patient">
                                             {(text) => <option value="2">{text}</option>}
                                         </FormattedMessage>
                                     </select>
@@ -252,7 +255,7 @@ class ModelEditUser extends Component {
                                 <div className="col-12 mb-3">
                                     <label htmlFor="image" className="form-label fw-bold">
                                         <i className="fas fa-image me-2 text-primary"></i>
-                                        <FormattedMessage id="createUser.image" defaultMessage="Image" />
+                                        <FormattedMessage id="system.user-manage.image" />
                                     </label>
                                     <div className="d-flex align-items-center gap-3">
                                         <input
@@ -273,11 +276,11 @@ class ModelEditUser extends Component {
                 <ModalFooter>
                     <Button color="secondary" onClick={this.toggle}>
                         <i className="fas fa-times me-2"></i>
-                        Close
+                        <FormattedMessage id="system.user-manage.close" />
                     </Button>
                     <Button color="primary" onClick={this.handleEditUser}>
                         <i className="fas fa-save me-2"></i>
-                        Update
+                        <FormattedMessage id="system.user-manage.save" />
                     </Button>
                 </ModalFooter>
             </Modal>
