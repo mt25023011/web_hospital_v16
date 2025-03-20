@@ -33,8 +33,7 @@
             "system-administrator": {
                 "header": "System Administrator",
                 "user-manage": "User manage",
-                "product-manage": "Package manage",
-                "register-package-group-or-account": "Register service package for group/account"
+                "user-redux": "User using redux"
             },
             "system-parameter": {
                 "header": "System-parameter"
@@ -78,8 +77,8 @@
             "edit": "Edit",
             "delete": "Delete",
             "invalid-input": "Please fill all fields",
-            "save": "Update",
-            "close": "Close",
+            "save":"Create",
+            "close":"Close",
             "sure-delete-user": "Are you sure to delete this user?"
         },
         "product-manage": {

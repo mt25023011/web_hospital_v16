@@ -33,8 +33,7 @@
             "system-administrator": {
                 "header": "Quản trị hệ thống",
                 "user-manage": "Quản lý người sử dụng",
-                "product-manage": "Quản lý gói",
-                "register-package-group-or-account": "Đăng ký gói dịch vụ cho nhóm/tài khoản"
+                "user-redux": "Quản lý người sử dụng redux"
             },
             "system-parameter": {
                 "header": "Tham số hệ thống"
@@ -78,8 +77,8 @@
             "edit": "Sửa",
             "delete": "Xóa",
             "invalid-input": "Vui lòng điền đầy đủ các trường",
-            "save": "Cập nhật",
-            "close": "Đóng",
+            "save":"Tạo",
+            "close":"Đóng",
             "sure-delete-user": "Bạn có chắc chắn muốn xóa người dùng này?"
         },
         "product-manage": {
