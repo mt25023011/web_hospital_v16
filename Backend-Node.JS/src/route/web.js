@@ -5,7 +5,7 @@ import authController from '../controllers/authController';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-
+import allCodesController from '../controllers/allCodesController';
 let router = express.Router();
 
 // Cấu hình multer cho upload ảnh
@@ -53,6 +53,9 @@ let initWebRoutes = (app) => {
 
     // Auth routes
     router.post('/api/login', authController.handleLogin);
+
+    //
+    router.get('/allcodes', allCodesController.getAllCodes);
 
     return app.use('/', router);
 }
