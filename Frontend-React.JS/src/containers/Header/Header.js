@@ -6,6 +6,7 @@ import Navigator from '../../components/Navigator';
 import { adminMenu } from './menuApp';
 import './Header.scss';
 import { LANGUAGES } from '../../utils';
+import { FormattedMessage } from 'react-intl';
 
 class Header extends Component {
     constructor(props) {
@@ -34,6 +35,8 @@ class Header extends Component {
                 </div>
                 <div className="header-right-container">
                     <div className="language">
+                        <span className='welcome'><FormattedMessage id="menu.system.welcome" />,
+                        {this.props.userInfo && this.props.userInfo.firstName ? " "+this.props.userInfo.firstName + "!" : 'Admin'} </span>
                         <span className={`language-item language-vi ${this.props.language === LANGUAGES.VI ? 'active' : ''}`} onClick={() => this.handleLanguageChange('vi')}>VN</span>
                         <span className={`language-item language-en ${this.props.language === LANGUAGES.EN ? 'active' : ''}`} onClick={() => this.handleLanguageChange('en')}>EN</span>
                     </div>
@@ -50,7 +53,8 @@ class Header extends Component {
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language
+        language: state.app.language,
+        userInfo: state.user.userInfo
     };
 };
 

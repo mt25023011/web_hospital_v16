@@ -29,14 +29,30 @@
     },
     "menu": {
         "system": {
-            "header": "Hệ thống",
-            "system-administrator": {
-                "header": "Quản trị hệ thống",
-                "user-manage": "Quản lý người sử dụng",
-                "user-redux": "Quản lý người sử dụng redux"
+            "user-manage": {
+                "header": "Quản lý người dùng",
+                "doctor-manage": "Quản lý bác sĩ",
+                "patient-manage": "Quản lý bệnh nhân",
+                "admin-manage": "Quản lý admin",
+                "crud": "Quản lý crud",
+                "crud-redux": "Quản lý crud redux"
             },
-            "system-parameter": {
-                "header": "Tham số hệ thống"
+            "welcome": "Chào mừng",
+            "hospital-manage": {
+                "header": "Phòng khám",
+                "clinic-manage": "Quản lý phòng khám"
+            },
+            "Specialty": {
+                "header": "Chuyên khoa",
+                "specialty-manage": "Quản lý chuyên khoa"
+            },
+            "Medical-facility": {
+                "header": "Cơ sở y tế",
+                "facility-manage": "Quản lý cơ sở y tế"
+            },
+            "Handbook": {
+                "header": "Sách hướng dẫn",
+                "handbook-manage": "Quản lý sách hướng dẫn"
             }
         }
     },

@@ -29,14 +29,30 @@
     },
     "menu": {
         "system": {
-            "header": "System",
-            "system-administrator": {
-                "header": "System Administrator",
-                "user-manage": "User manage",
-                "user-redux": "User using redux"
+            "user-manage": {
+                "header": "User manage",
+                "doctor-manage": "Doctor manage",
+                "patient-manage": "Patient manage",
+                "admin-manage": "Admin manage",
+                "crud": "CRUD",
+                "crud-redux": "CRUD redux"
             },
-            "system-parameter": {
-                "header": "System-parameter"
+            "welcome": "Welcome",
+            "hospital-manage": {
+                "header": "Hospital",
+                "clinic-manage": "Clinic manage"
+            },
+            "Specialty": {
+                "header": "Specialty",
+                "specialty-manage": "Specialty manage"
+            },
+            "Medical-facility": {
+                "header": "Medical facility",
+                "facility-manage": "Facility manage"
+            },
+            "Handbook": {
+                "header": "Handbook",
+                "handbook-manage": "Handbook manage"
             }
         }
     },
