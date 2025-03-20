@@ -56,18 +56,18 @@ class ModelCreateUser extends Component {
 
   toggle = () => {
     this.setState({
-        email: "",
-        password: "",
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        address: "",
-        roleID: 2,
-        gender: 0,
-        image: null,
-        imagePreviewUrl: null,
-        errMessage: "",
-      });
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
+      address: "",
+      roleID: 2,
+      gender: 0,
+      image: null,
+      imagePreviewUrl: null,
+      errMessage: "",
+    });
     this.props.toggle();
   };
 
@@ -112,7 +112,7 @@ class ModelCreateUser extends Component {
 
         // Show success toast with formatted messages
         ToastUtil.success(successMessage, userCreationSuccessMessage);
-        
+
         // Reset form and close the modal after success
         this.resetForm();
         this.props.refreshUserList(); // Refresh the user list

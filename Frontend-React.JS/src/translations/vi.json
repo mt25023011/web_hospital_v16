@@ -37,6 +37,9 @@
                 "crud": "Quản lý crud",
                 "crud-redux": "Quản lý crud redux"
             },
+            "user-redux": {
+                "header": "Quản lý người dùng redux"
+            },
             "welcome": "Chào mừng",
             "hospital-manage": {
                 "header": "Phòng khám",
@@ -93,9 +96,10 @@
             "edit": "Sửa",
             "delete": "Xóa",
             "invalid-input": "Vui lòng điền đầy đủ các trường",
-            "save":"Tạo",
+            "save":"Tạo Nguời Dùng",
             "close":"Đóng",
-            "sure-delete-user": "Bạn có chắc chắn muốn xóa người dùng này?"
+            "sure-delete-user": "Bạn có chắc chắn muốn xóa người dùng này?",
+            "profile-image": "Ảnh đại diện"
         },
         "product-manage": {
             "fail-to-load-foprtype": "Không thể tải về danh sách gói",

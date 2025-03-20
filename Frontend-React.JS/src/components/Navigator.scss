@@ -39,6 +39,13 @@
                     text-decoration: none;
                     color: $text-in-light;
                 }
+                &.active {
+                    background-color: green;
+                    font-weight: 500;
+                    a {
+                        color: orange;
+                    }
+                }
                 .sub-menu-list {
                     display: none;
                     background-color: $bg-menu-color;
@@ -74,7 +81,6 @@
                     color: $colormain;
                 }
                 &:hover {
-                    background-color: darken($bg-menu-color, 3);
                     .sub-menu-list {
                         display: block;
                     }
