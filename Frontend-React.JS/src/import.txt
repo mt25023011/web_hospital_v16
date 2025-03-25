@@ -1,0 +1,29 @@
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('ROLE','R0','Admin', 'Quản trị viên' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('ROLE','R1','Doctor', 'Bác sĩ' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('ROLE','R2','Patient', 'Bệnh nhân' ); 
+
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('STATUS','S1','New', 'Lịch hẹn mới' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('STATUS','S2','Confirmed', 'Đã xác nhận' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('STATUS','S3','Done', 'Đã khám xong' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('STATUS','S4','Cancel', 'Đã hủy' ); 
+
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T1','8:00 AM - 9:00 AM', '8:00 - 9:00' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T2','9:00 AM - 10:00 AM', '9:00 - 10:00' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T3','10:00 AM - 11:00 AM', '10:00 - 11:00' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T4','11:00 AM - 0:00 PM', '11:00 - 12:00' ); 
+
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T5','1:00 PM - 2:00 PM', '13:00 - 14:00' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T6','2:00 PM - 3:00 PM', '14:00 - 15:00' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T7','3:00 PM - 4:00 PM', '15:00 - 16:00' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('TIME','T8','4:00 PM - 5:00 PM', '16:00 - 17:00' ); 
+
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('POSITION','P0','None', 'Bác sĩ' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('POSITION','P1','Master', 'Thạc sĩ' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('POSITION','P2','Doctor', 'Tiến sĩ' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('POSITION','P3','Associate Professor', 'Phó giáo sư' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('POSITION','P4','Professor', 'Giáo sư' ); 
+
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('GENDER','0','Female', 'Nữ' ); 
+INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('GENDER','1','Male', 'Nam' ); 
+
+INSERT INTO users (users.email, users.password) VALUES ('admin1@admin.com','$2a$12$NxjKonGT0.WONAznBvXz9e/UdVXWoxniVSRMEujjyeVkw1zCoyb1G');

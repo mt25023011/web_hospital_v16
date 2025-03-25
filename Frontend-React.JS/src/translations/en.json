@@ -21,6 +21,16 @@
         "success": "Success",
         "error": "Error"
     },
+    "validate": {
+        "phoneNumber": "Phone number must be 10 digits",
+        "email": "Email is not valid",
+        "password": "Password must be at least 6 characters",
+        "firstName": "First name must be at least 3 characters",
+        "lastName": "Last name must be at least 3 characters",
+        "address": "Address must be at least 3 characters",
+        "phoneNumber": "Phone number must be 10 digits",
+        "image": "Image must be an image"
+    },
     "login": {
         "login": "Login",
         "username": "Username",
@@ -68,6 +78,9 @@
             "username": "Username",
             "firstname": "First name",
             "lastname": "Last name",
+            "title": "Create user",
+            "subtitle": "Please fill in the information below",
+            "phone-number": "Phone number",
             "fullname": "Fullname",
             "mobile": "Phone",
             "email": "Email",
@@ -78,7 +91,8 @@
             "action": "Action",
             "image": "Image",
             "address": "Address",
-            "phone-number": "Phone number",
+            "phoneNumber": "Phone number",
+            "position": "Position",
             "status": "Status",
             "add-user": "Add user",
             "edit-user": "Edit user information",

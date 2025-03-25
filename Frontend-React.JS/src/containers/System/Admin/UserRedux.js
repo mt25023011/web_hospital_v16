@@ -3,10 +3,11 @@ import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./UserRedux.scss";
-import userService from "../../../services/userService";
+import "./userRedux.css";
 import { LANGUAGES } from "../../../utils";
 import { connect } from "react-redux";
+import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart } from "../../../store/actions/adminActions";
+import * as actions from "../../../store/actions";
 
 class UserRedux extends Component {
     constructor(props) {
@@ -14,108 +15,262 @@ class UserRedux extends Component {
         this.state = {
             roles: [],
             genders: [],
+            positions: [],
             formData: {
                 email: "",
                 password: "",
                 firstname: "",
                 lastname: "",
-                gender: "1",
-                role: "2",
+                gender: 0,
+                role: 2,
+                position: 0,
+                phoneNumber: "",
                 address: "",
                 image: null,
             },
+            errors: {
+                email: "",
+                password: "",
+                firstname: "",
+                lastname: "",
+                address: "",
+                phoneNumber: "",
+            }
         };
     }
 
-    async componentDidMount() {
-        try {
-            let res = await userService.getAllCodesService("ROLE");
-            let resGender = await userService.getAllCodesService("GENDER");
-            this.setState({ roles: res.data, genders: resGender.data });
-            console.log(res, resGender);
-        } catch (error) {
-            console.log(error);
+    async componentDidMount() { 
+        this.props.fetchGenderStart();
+        this.props.fetchPositionStart();
+        this.props.fetchRoleStart();
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.genders !== this.props.genders) {
+            this.setState({ genders: this.props.genders });
+        }
+        if (prevProps.positions !== this.props.positions) {
+            this.setState({ positions: this.props.positions });
+        }
+        if (prevProps.roles !== this.props.roles) {
+            this.setState({ roles: this.props.roles });
         }
     }
 
+    validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    validatePassword = (password) => {
+        return password.length >= 6;
+    }
+
     handleChange = (e) => {
+        const { name, value } = e.target;
+        let errors = { ...this.state.errors };
+
+        // Validate fields
+        switch (name) {
+            case 'email':
+                errors.email = this.validateEmail(value) ? '' : this.props.intl.formatMessage({ id: "validate.email" });
+                break;
+            case 'password':
+                errors.password = this.validatePassword(value) ? '' : this.props.intl.formatMessage({ id: "validate.password" });
+                break;
+            case 'firstname':
+                errors.firstname = value.length < 2 ? this.props.intl.formatMessage({ id: "validate.firstName" }) : '';
+                break;
+            case 'lastname':
+                errors.lastname = value.length < 2 ? this.props.intl.formatMessage({ id: "validate.lastName" }) : '';
+                break;
+            case 'address':
+                errors.address = value.length < 5 ? this.props.intl.formatMessage({ id: "validate.address" }) : '';
+                break;
+            case 'phoneNumber':
+                errors.phoneNumber = value.length < 10 ? this.props.intl.formatMessage({ id: "validate.phoneNumber" }) : '';
+                break;
+            default:
+                break;
+        }
+
         this.setState({
+            errors,
             formData: {
                 ...this.state.formData,
-                [e.target.name]: e.target.value,
+                [name]: value,
             },
         });
     };
 
     handleImageChange = (e) => {
         const file = e.target.files[0];
-        this.setState({
-            formData: { ...this.state.formData, image: file },
-        });
+        if (file) {
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('File must be an image');
+                return;
+            }
+            this.setState({
+                formData: { ...this.state.formData, image: file },
+            });
+        }
     };
 
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitted Data:", this.state.formData);
+
+        // Check if there are any errors
+        const hasErrors = Object.values(this.state.errors).some(error => error !== '');
+        if (hasErrors) {
+            return;
+        }
+
+        try {
+            let formData = { ...this.state.formData };
+            if (formData.role !== "1") {
+                formData.position = "";
+            }
+            console.log("formData", formData);
+            let data = {
+                email: formData.email,
+                password: formData.password,
+                firstName: formData.firstname,
+                lastName: formData.lastname,
+                phoneNumber: formData.phoneNumber,
+                gender: parseInt(formData.gender),
+                roleID: formData.role,
+                positionID: formData.position,
+                address: formData.address,
+                image: formData.image,
+            }
+            this.props.createUser(data);
+            // Add your API call here
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            // Handle error appropriately
+        }
     };
 
     render() {
         const { intl } = this.props;
-        const { formData } = this.state;
+        const { formData, errors } = this.state;
         let language = this.props.language;
-        console.log('Current language:', language);
+
         return (
-            <Container className="mt-4">
+            <Container className="mt-5">
                 <Row className="justify-content-center">
                     <Col md={8} lg={6}>
-                        <Card className="shadow-lg p-4 rounded-4 border-0">
-                            <Card.Title className="text-center mb-4 fw-bold fs-4 text-primary">
-                                <FormattedMessage id="system.user-manage.title" defaultMessage="User Registration" />
+                        <Card className="shadow-lg p-4 rounded-4 border-0 bg-white">
+                            <Card.Title className="text-center mb-5">
+                                <h3 className="fw-bold text-primary mb-0">
+                                    <FormattedMessage id="system.user-manage.title" defaultMessage="User Registration" />
+                                </h3>
+                                <div className="text-muted small mt-2">
+                                    <FormattedMessage id="system.user-manage.subtitle" defaultMessage="Please fill in the information below" />
+                                </div>
                             </Card.Title>
-                            <Form onSubmit={this.handleSubmit}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label className="text-capitalize">
+                            <Form onSubmit={this.handleSubmit} className="needs-validation">
+                                <Form.Group className="mb-4">
+                                    <Form.Label className="text-capitalize fw-medium">
                                         <FormattedMessage id="system.user-manage.email" defaultMessage="Email" />
                                     </Form.Label>
-                                    <Form.Control type="email" name="email" value={formData.email} onChange={this.handleChange} required />
+                                    <Form.Control
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={this.handleChange}
+                                        required
+                                        isInvalid={!!errors.email}
+                                        className="py-2"
+                                        placeholder="Enter your email"
+                                    />
+                                    <Form.Control.Feedback type="invalid" className="d-block">
+                                        {errors.email}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label className="text-capitalize">
+                                <Form.Group className="mb-4">
+                                    <Form.Label className="text-capitalize fw-medium">
                                         <FormattedMessage id="system.user-manage.password" defaultMessage="Password" />
                                     </Form.Label>
-                                    <Form.Control type="password" name="password" value={formData.password} onChange={this.handleChange} required />
+                                    <Form.Control
+                                        type="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={this.handleChange}
+                                        required
+                                        isInvalid={!!errors.password}
+                                        className="py-2"
+                                        placeholder="Enter your password"
+                                    />
+                                    <Form.Control.Feedback type="invalid" className="d-block">
+                                        {errors.password}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
-                                <Row>
+                                <Row className="g-4">
                                     <Col>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="text-capitalize">
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
                                                 <FormattedMessage id="system.user-manage.firstname" defaultMessage="First Name" />
                                             </Form.Label>
-                                            <Form.Control type="text" name="firstname" value={formData.firstname} onChange={this.handleChange} required />
+                                            <Form.Control
+                                                type="text"
+                                                name="firstname"
+                                                value={formData.firstname}
+                                                onChange={this.handleChange}
+                                                required
+                                                isInvalid={!!errors.firstname}
+                                                className="py-2"
+                                                placeholder="Enter first name"
+                                            />
+                                            <Form.Control.Feedback type="invalid" className="d-block">
+                                                {errors.firstname}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
                                     <Col>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="text-capitalize">
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
                                                 <FormattedMessage id="system.user-manage.lastname" defaultMessage="Last Name" />
                                             </Form.Label>
-                                            <Form.Control type="text" name="lastname" value={formData.lastname} onChange={this.handleChange} required />
+                                            <Form.Control
+                                                type="text"
+                                                name="lastname"
+                                                value={formData.lastname}
+                                                onChange={this.handleChange}
+                                                required
+                                                isInvalid={!!errors.lastname}
+                                                className="py-2"
+                                                placeholder="Enter last name"
+                                            />
+                                            <Form.Control.Feedback type="invalid" className="d-block">
+                                                {errors.lastname}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
                                 </Row>
 
-                                <Row className="align-items-center">
+                                <Row className="g-4">
                                     <Col md={6}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="text-capitalize">
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
                                                 <FormattedMessage id="system.user-manage.gender" defaultMessage="Gender" />
                                             </Form.Label>
-                                            <Form.Select name="gender" value={formData.gender} onChange={this.handleChange}>
+                                            <Form.Select
+                                                name="gender"
+                                                value={formData.gender}
+                                                onChange={this.handleChange}
+                                                className="py-2"
+                                            >
                                                 {this.state.genders.map((gender, index) => {
                                                     return (
-                                                        <option key={gender.keyMap} value={index}>
+                                                        <option key={index} value={index}>
                                                             {language === LANGUAGES.VI ? gender.value_Vi : gender.value_En}
                                                         </option>
                                                     );
@@ -124,11 +279,16 @@ class UserRedux extends Component {
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="text-capitalize">
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
                                                 <FormattedMessage id="system.user-manage.role" defaultMessage="Role" />
                                             </Form.Label>
-                                            <Form.Select name="role" value={formData.role} onChange={this.handleChange}>
+                                            <Form.Select
+                                                name="role"
+                                                value={formData.role}
+                                                onChange={this.handleChange}
+                                                className="py-2"
+                                            >
                                                 {this.state.roles.map((role, index) => {
                                                     return (
                                                         <option key={index} value={index}>
@@ -140,28 +300,104 @@ class UserRedux extends Component {
                                         </Form.Group>
                                     </Col>
                                 </Row>
+                                <Row className="g-4">
+                                    <Col md={6}>
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
+                                                <FormattedMessage id="system.user-manage.phoneNumber" defaultMessage="Phone Number" />
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                name="phoneNumber"
+                                                value={formData.phoneNumber}
+                                                onChange={this.handleChange}
+                                                required
+                                                isInvalid={!!errors.phoneNumber}
+                                                className="py-2"
+                                                placeholder="Enter your phone number"
+                                            />
+                                            <Form.Control.Feedback type="invalid" className="d-block">
+                                                {errors.phoneNumber}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+                                    {formData.role === "1" && (
+                                        <Col md={6}>
+                                            <Form.Group className="mb-4">
+                                                <Form.Label className="text-capitalize fw-medium">
+                                                    <FormattedMessage id="system.user-manage.position" defaultMessage="Position" />
+                                                </Form.Label>
+                                                <Form.Select
+                                                    name="position"
+                                                    value={formData.position}
+                                                    onChange={this.handleChange}
+                                                    className="py-2"
+                                                >
+                                                    {this.state.positions.map((position, index) => {
+                                                        return (
+                                                            <option key={index} value={index}>
+                                                                {language === LANGUAGES.VI ? position.value_Vi : position.value_En}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </Form.Select>
+                                            </Form.Group>
+                                        </Col>
+                                    )}
+                                </Row>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label className="text-capitalize">
+
+                                <Form.Group className="mb-4">
+                                    <Form.Label className="text-capitalize fw-medium">
                                         <FormattedMessage id="system.user-manage.address" defaultMessage="Address" />
                                     </Form.Label>
-                                    <Form.Control as="textarea" rows={2} name="address" value={formData.address} onChange={this.handleChange} required />
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={this.handleChange}
+                                        required
+                                        isInvalid={!!errors.address}
+                                        className="py-2"
+                                        placeholder="Enter your address"
+                                    />
+                                    <Form.Control.Feedback type="invalid" className="d-block">
+                                        {errors.address}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label className="text-capitalize">
+                                <Form.Group className="mb-4">
+                                    <Form.Label className="text-capitalize fw-medium">
                                         <FormattedMessage id="system.user-manage.profile-image" defaultMessage="Profile Image" />
                                     </Form.Label>
-                                    <Form.Control type="file" accept="image/*" onChange={this.handleImageChange} />
+                                    <Form.Control
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={this.handleImageChange}
+                                        className="py-2"
+                                    />
                                     {formData.image && (
                                         <div className="text-center mt-3">
-                                            <img src={URL.createObjectURL(formData.image)} alt="Preview" className="rounded-circle shadow" width={100} height={100} />
+                                            <img
+                                                src={URL.createObjectURL(formData.image)}
+                                                alt="Preview"
+                                                className="rounded-circle shadow-sm border border-2 border-primary"
+                                                width={120}
+                                                height={120}
+                                                style={{ objectFit: 'cover' }}
+                                            />
                                         </div>
                                     )}
                                 </Form.Group>
 
-                                <div className="text-center">
-                                    <Button variant="primary" type="submit" className="px-4 py-2 fw-bold shadow-sm">
+                                <div className="text-center d-flex justify-content-center gap-3 mt-5">
+                                    <Button
+                                        type="submit"
+                                        className="px-5 py-2 fw-bold shadow-sm save-btn"
+                                        disabled={Object.values(errors).some(error => error !== '')}
+                                        onClick={this.handleSubmit}
+                                    >
                                         <FormattedMessage id="system.user-manage.save" defaultMessage="Save" />
                                     </Button>
                                 </div>
@@ -177,10 +413,19 @@ class UserRedux extends Component {
 const mapStateToProps = (state) => {
     return {
         language: state.app.language,
+        genders: state.admin.genders,
+        positions: state.admin.positions,
+        roles: state.admin.roles,
     };
 };
+
 const mapDispatchToProps = (dispatch) => {
     return {
+        fetchGenderStart: () => dispatch(fetchGenderStart()),
+        fetchPositionStart: () => dispatch(fetchPositionStart()),
+        fetchRoleStart: () => dispatch(fetchRoleStart()),
+        createUser: (data) => dispatch(createUser(data)),
     };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(UserRedux));

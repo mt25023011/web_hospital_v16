@@ -21,6 +21,16 @@
         "success": "Thành công",
         "error": "Lỗi"
     },
+    "validate": {
+        "phoneNumber": "Số điện thoại phải có 10 số",
+        "email": "Email không hợp lệ",
+        "password": "Mật khẩu phải có từ 6 ký tự trở lên",
+        "firstName": "Tên phải có từ 3 ký tự trở lên",
+        "lastName": "Họ phải có từ 3 ký tự trở lên",
+        "address": "Địa chỉ phải có từ 3 ký tự trở lên",
+        "phoneNumber": "Số điện thoại phải có 10 số",
+        "image": "Ảnh đại diện phải là ảnh"
+    },
     "login": {
         "login": "Đăng nhập",
         "username": "Tên đăng nhập",
@@ -73,9 +83,13 @@
             "gender": "Giới tính",
             "male": "Nam",
             "female": "Nữ",
+            "title": "Tạo người dùng",
+            "phone-number": "Số điện thoại",
+            "subtitle": "Vui lòng điền thông tin bên dưới",
             "email": "Email",
             "address": "Địa chỉ",
-            "phone-number": "Số điện thoại",
+            "position": "Vị trí",
+            "phoneNumber": "Số điện thoại",
             "role": "Vai trò",
             "action": "Hành động",
             "image": "Ảnh",
