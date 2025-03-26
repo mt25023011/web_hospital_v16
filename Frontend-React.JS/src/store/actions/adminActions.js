@@ -18,6 +18,7 @@ export const userLoginFail = () => ({
     type: actionTypes.USER_LOGIN_FAIL
 })
 
+//create user
 export const createUser = (data) => {
     return async (dispatch, getState) => {
         try {
@@ -44,7 +45,7 @@ export const createUserFail = (error) => ({
     error: error
 })
 
-
+//fetch gender
 export const fetchGenderSuccess = (data) => ({
     type: actionTypes.FETCH_GENDER_SUCCESS,
     data: data
@@ -69,6 +70,7 @@ export const fetchGenderStart = () => {
     }
 }
 
+//fetch position
 export const fetchPositionSuccess = (data) => ({
     type: actionTypes.FETCH_POSITION_SUCCESS,
     data: data
@@ -93,6 +95,7 @@ export const fetchPositionStart = () => {
     }
 }
 
+//fetch role
 export const fetchRoleSuccess = (data) => ({
     type: actionTypes.FETCH_ROLE_SUCCESS,
     data: data
@@ -117,3 +120,64 @@ export const fetchRoleStart = () => {
     }
 }
 
+//fetch all users
+export const fetchAllUsersSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_USERS_SUCCESS,
+    data: data
+})
+export const fetchAllUsersFail = (error) => ({
+    type: actionTypes.FETCH_ALL_USERS_FAIL,
+    error: error
+})
+export const fetchAllUsersStart = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await userService.getAllUsers();
+            let users={
+                data: res,
+                isLoading: false,
+                message: "Fetch all users successfully"
+            }
+            if (users&&users.data) {
+                dispatch(fetchAllUsersSuccess(users.data));
+            } else {
+                dispatch(fetchAllUsersFail(users.data));
+            }
+        } catch (error) {
+            console.log("error", error);
+            dispatch(fetchAllUsersFail(error));
+        }
+    }
+}
+
+//delete user
+export const deleteUserSuccess = (data) => ({
+    type: actionTypes.FETCH_DELETE_USER_SUCCESS,
+    data: data
+})
+
+export const deleteUserFail = (error) => ({
+    type: actionTypes.FETCH_DELETE_USER_FAIL,
+    error: error
+})
+
+export const deleteUserStart = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await userService.deleteUser(id);
+            let users={
+                status: res.status,
+                message: res.message
+            }
+            console.log("users", users);
+            if (users&&users.status===200) {
+                dispatch(deleteUserSuccess(users));
+            } else {
+                dispatch(deleteUserFail(users));
+            }
+        } catch (error) {
+            console.log("error", error);
+            dispatch(deleteUserFail(error));
+        }
+    }
+}

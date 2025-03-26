@@ -78,7 +78,10 @@ let deleteUser = async (id) => {
             
         }
         await db.User.destroy({ where: { id: id } });
-        return "Delete user successfully";
+        return {
+            status: 200,
+            message: "Delete user successfully"
+        };
     } catch (error) {
         console.log(error);
         throw error;

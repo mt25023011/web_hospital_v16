@@ -40,6 +40,7 @@ let createNewUser = async (req, res) => {
 let deleteUser = async (req, res) => {
     try {
         let data = await userService.deleteUser(req.query.id);
+        
         return res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({ error: error.message });

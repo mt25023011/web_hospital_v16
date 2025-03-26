@@ -7,6 +7,10 @@ const initialState = {
     positions: [],
     isLoadingRole: false,
     roles: [],
+    isLoading: false,
+    users: [],
+    isLoadingDeleteUser: false,
+    deleteUser: null
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -89,7 +93,48 @@ const adminReducer = (state = initialState, action) => {
                 isLoading: false,
                 user: null
             }
+        case actionTypes.FETCH_ALL_USERS_START:
+            console.log("FETCH_ALL_USERS_START" , action);
+            return {
+                ...state,
+                isLoading: true,
+                users: []
+            }
+        case actionTypes.FETCH_ALL_USERS_SUCCESS:
+            console.log("FETCH_ALL_USERS_SUCCESS" , action);
+            return {
+                ...state,
+                isLoading: false,
+                users: action.data
 
+            }
+        case actionTypes.FETCH_ALL_USERS_FAIL:
+            console.log("FETCH_ALL_USERS_FAIL" , action);
+            return {
+                ...state,
+                isLoading: false,
+                users: []
+            }
+        case actionTypes.FETCH_DELETE_USER_START:
+            console.log("FETCH_DELETE_USER_START" , action);
+            return {
+                ...state,
+                isLoadingDeleteUser: true
+            }
+        case actionTypes.FETCH_DELETE_USER_SUCCESS:
+            console.log("FETCH_DELETE_USER_SUCCESS" , action);
+            return {
+                ...state,
+                isLoadingDeleteUser: false,
+                deleteUser: action.data
+            }
+        case actionTypes.FETCH_DELETE_USER_FAIL:
+            console.log("FETCH_DELETE_USER_FAIL" , action);
+            return {
+                ...state,
+                isLoadingDeleteUser: false,
+                deleteUser: null
+            }
         default:
             return state;
     }

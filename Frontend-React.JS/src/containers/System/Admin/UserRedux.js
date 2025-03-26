@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
+import { LANGUAGES } from "../../../utils";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
-import { LANGUAGES } from "../../../utils";
 import { connect } from "react-redux";
-import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart } from "../../../store/actions/adminActions";
+import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetchAllUsersStart } from "../../../store/actions/adminActions";
 import * as actions from "../../../store/actions";
 import UserListShow from "./UserListShow";
 
@@ -165,7 +166,26 @@ class UserRedux extends Component {
                 address: formData.address,
                 image: formData.image ? formData.image.name : "",
             }
+
+            this.setState({
+                formData: {
+                    email: "",
+                    password: "",
+                    firstname: "",
+                    lastname: "",
+                    gender: 0,
+                    role: 2,
+                    position: 0,
+                    phoneNumber: "",
+                    address: "",
+                    image: null,
+                },
+            });
             this.props.createUser(data);
+            this.props.fetchAllUsersStart();
+            setTimeout(() => {
+                this.props.fetchAllUsersStart();
+            }, 500);
             // Add your API call here
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -422,7 +442,12 @@ class UserRedux extends Component {
                         </Card>
                     </Col>
                 </Row>
-                <UserListShow />
+                <UserListShow 
+                    genders={this.state.genders} 
+                    positions={this.state.positions} 
+                    roles={this.state.roles}
+                    language={this.props.language}
+                />
             </Container>
         );
     }
@@ -443,6 +468,7 @@ const mapDispatchToProps = (dispatch) => {
         fetchPositionStart: () => dispatch(fetchPositionStart()),
         fetchRoleStart: () => dispatch(fetchRoleStart()),
         createUser: (data) => dispatch(createUser(data)),
+        fetchAllUsersStart: () => dispatch(fetchAllUsersStart())
     };
 };
 

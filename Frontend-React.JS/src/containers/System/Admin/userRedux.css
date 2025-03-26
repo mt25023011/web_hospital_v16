@@ -1,25 +1,135 @@
-.container-user {
-    background-color: #cbd4cd;
+.users-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
 }
 
-.save-btn {
-    background-color: #00ff00;
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.table-responsive {
+    max-height: 75vh;
+    overflow-y: auto;
+    border-radius: 10px;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 12px;
+}
+
+/* Hình ảnh người dùng */
+.table img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+/* Badge giới tính */
+.badge {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.bg-primary {
+    background-color: #007bff !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+/* Nút hành động */
+.btn-edit,
+.btn-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.btn-edit {
+    background-color: #ffc107;
     color: #fff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    height: 40px;
 }
 
-.save-btn:hover {
-    background-color: #00cc00;
+.btn-edit:hover {
+    background-color: #e0a800;
 }
 
-.save-btn:active {
-    background-color: #009900;
+.btn-delete {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
 }
 
+.btn-delete:hover {
+    background-color: #c82333;
+}
 
+/* Căn chỉnh khoảng cách */
+.gap-2 {
+    gap: 8px;
+}
 
+.action-btn {
+    width: 100px;
+}
+.nam-gender, .nu-gender {
+    padding: 0.75rem 0.5rem;
+    white-space: nowrap;
+    border-radius: 10px;
+    color: #fff;
+}
+.nam-gender {
+    background-color: #007bff;
+}
+
+.nu-gender {
+    background-color: #dc35aa;
+}
+.admin-role, .doctor-role, .user-role {
+    padding: 0.75rem 0.5rem;
+    white-space: nowrap;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.admin-role {
+    background-color: #007bff;
+}
+
+.doctor-role {
+    background-color: #dc3545;
+}
+
+.user-role {
+    background-color: #bdb436;
+}
+
+.position-container {
+    padding: 0.75rem 0.5rem;
+    white-space: nowrap;
+    border-radius: 10px;
+    color: #fff;
+    background-color: #3b3d3f;
+}
 
 
