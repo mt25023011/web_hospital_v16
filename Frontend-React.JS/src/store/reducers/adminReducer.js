@@ -10,7 +10,9 @@ const initialState = {
     isLoading: false,
     users: [],
     isLoadingDeleteUser: false,
-    deleteUser: null
+    deleteUser: null,
+    isLoadingUpdateUser: false,
+    updateUser: []
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -134,6 +136,26 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 isLoadingDeleteUser: false,
                 deleteUser: null
+            }
+        case actionTypes.FETCH_UPDATE_USER_SUCCESS:
+            console.log("FETCH_UPDATE_USER_SUCCESS" , action);
+            return {
+                ...state,
+                isLoadingUpdateUser: false,
+                updateUser: action.data
+            }
+        case actionTypes.FETCH_UPDATE_USER_FAIL:
+            console.log("FETCH_UPDATE_USER_FAIL" , action);
+            return {
+                ...state,
+                isLoadingUpdateUser: false,
+                updateUser: null
+            }
+        case actionTypes.FETCH_UPDATE_USER_START:
+            console.log("FETCH_UPDATE_USER_START" , action);
+            return {
+                ...state,
+                isLoadingUpdateUser: true
             }
         default:
             return state;

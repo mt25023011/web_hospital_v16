@@ -106,7 +106,9 @@ let updateUser = async (id, data) => {
         if (data.roleID) {
             data.roleID = `R${data.roleID === '1' ? '1' : data.roleID === '0' ? '0' : '2'}`;
         }
-
+        if (data.positionID) {
+            data.positionID = `P${data.positionID==='0'?'0':data.positionID==='1'?'1':data.positionID==='2'?'2':data.positionID==='3'?'3':'4'}`;
+        }
         // Handle image update
         if (data.image) {
             try {
@@ -146,7 +148,11 @@ let updateUser = async (id, data) => {
         const updatedUser = await db.User.findOne({ where: { id: id } });
         const { password, ...userWithoutPassword } = updatedUser.toJSON();
         
-        return userWithoutPassword;
+        return {
+            status: 200,
+            message: "Update user successfully",
+            data: userWithoutPassword
+        };
     } catch (error) {
         console.error('Error updating user:', error);
         throw error;

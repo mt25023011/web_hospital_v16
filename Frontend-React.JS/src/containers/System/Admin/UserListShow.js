@@ -76,6 +76,10 @@ class UserListShow extends Component {
         });
     };
 
+    handleEdit = (user) => {
+        this.props.handleEditFromParent(user);
+    };
+
     getRoleIcon = (roleId) => {
         if (!roleId) return <FaUser className="me-1" />;
         switch (roleId) {
@@ -137,7 +141,7 @@ class UserListShow extends Component {
 
     render() {
         return (
-            <Container className="mt-4">
+            <Container className="mt-4 ">
                 <ConfirmModal />
                 <Card className="shadow-sm border-0 rounded-4">
                     <Card.Header className="bg-white border-0 py-4">
@@ -221,6 +225,7 @@ class UserListShow extends Component {
                                                             variant="outline-primary"
                                                             size="sm"
                                                             className="d-flex align-items-center gap-1"
+                                                            onClick={() => this.handleEdit(item)}
                                                         >
                                                             <FaEdit />
                                                             <FormattedMessage id="system.user-manage.edit" />

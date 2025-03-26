@@ -181,3 +181,37 @@ export const deleteUserStart = (id) => {
         }
     }
 }
+
+//update user
+export const updateUserSuccess = (data) => ({
+    type: actionTypes.FETCH_UPDATE_USER_SUCCESS,
+    data: data
+})
+
+export const updateUserFail = (error) => ({
+    type: actionTypes.FETCH_UPDATE_USER_FAIL,
+    error: error
+})
+
+export const updateUserStart = (data) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await userService.updateUser(data);   
+            let users={
+                status: res.status,
+                message: res.message
+            }
+            console.log("users", users);
+            if (users&&users.status===200) {
+                dispatch(updateUserSuccess(users));
+            } else {
+                dispatch(updateUserFail(users));
+            }
+        } catch (error) {
+            console.log("error", error);
+            dispatch(updateUserFail(error));
+        }
+    }
+}
+
+

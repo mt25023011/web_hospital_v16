@@ -114,7 +114,10 @@
             "save":"Create",
             "close":"Close",
             "sure-delete-user": "Are you sure to delete this user?",
-            "profile-image": "Profile image"
+            "profile-image": "Profile image",
+            "update": "Update",
+            "update-user": "Update user",
+            "reset": "Return"
         },
         "product-manage": {
             "fail-to-load-foprtype": "Fail to load packages list",

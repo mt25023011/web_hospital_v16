@@ -114,7 +114,10 @@
             "save":"Tạo Nguời Dùng",
             "close":"Đóng",
             "sure-delete-user": "Bạn có chắc chắn muốn xóa người dùng này?",
-            "profile-image": "Ảnh đại diện"
+            "profile-image": "Ảnh đại diện",
+            "update": "Cập nhật",
+            "update-user": "Cập nhật người dùng",
+            "reset": "Trở lại"
         },
         "product-manage": {
             "fail-to-load-foprtype": "Không thể tải về danh sách gói",

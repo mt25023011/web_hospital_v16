@@ -4,6 +4,7 @@
     border-radius: 10px;
 }
 
+
 .title {
     font-size: 24px;
     font-weight: bold;
@@ -161,7 +162,6 @@
 }
 
 .save-btn {
-    background: linear-gradient(45deg, #4a90e2, #357abd);
     border: none;
     border-radius: 10px;
     padding: 12px 30px;
@@ -173,7 +173,6 @@
 }
 
 .save-btn:hover {
-    background: linear-gradient(45deg, #357abd, #4a90e2);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
 }

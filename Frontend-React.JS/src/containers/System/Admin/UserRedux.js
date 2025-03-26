@@ -4,11 +4,12 @@ import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 import { LANGUAGES } from "../../../utils";
 import { connect } from "react-redux";
-import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetchAllUsersStart } from "../../../store/actions/adminActions";
+import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetchAllUsersStart,  updateUserStart } from "../../../store/actions/adminActions";
 import * as actions from "../../../store/actions";
 import UserListShow from "./UserListShow";
-import {  FaSave, FaExclamationCircle } from 'react-icons/fa';
+import { FaSave, FaExclamationCircle } from 'react-icons/fa';
 import ToastUtil from "../../../utils/ToastUtil";
+import { CRUD_ACTION } from "../../../utils/constant";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
@@ -21,6 +22,7 @@ class UserRedux extends Component {
             genders: [],
             positions: [],
             formData: {
+                id: "",
                 email: "",
                 password: "",
                 firstname: "",
@@ -32,6 +34,7 @@ class UserRedux extends Component {
                 address: "",
                 image: null,
             },
+            action: CRUD_ACTION.CREATE,
             errors: {
                 email: "",
                 password: "",
@@ -44,7 +47,7 @@ class UserRedux extends Component {
         };
     }
 
-    async componentDidMount() { 
+    async componentDidMount() {
         this.props.fetchGenderStart();
         this.props.fetchPositionStart();
         this.props.fetchRoleStart();
@@ -128,32 +131,32 @@ class UserRedux extends Component {
 
     handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validate all fields
         const newErrors = {};
         let hasErrors = false;
 
-        if(this.state.formData.email === '') {
+        if (this.state.formData.email === '') {
             newErrors.email = this.props.intl.formatMessage({ id: "validate.email" });
             hasErrors = true;
         }
-        if(this.state.formData.password === '') {
+        if (this.state.formData.password === '') {
             newErrors.password = this.props.intl.formatMessage({ id: "validate.password" });
             hasErrors = true;
         }
-        if(this.state.formData.firstname === '') {
+        if (this.state.formData.firstname === '') {
             newErrors.firstname = this.props.intl.formatMessage({ id: "validate.firstName" });
             hasErrors = true;
         }
-        if(this.state.formData.lastname === '') {
+        if (this.state.formData.lastname === '') {
             newErrors.lastname = this.props.intl.formatMessage({ id: "validate.lastName" });
             hasErrors = true;
         }
-        if(this.state.formData.phoneNumber === '') {
+        if (this.state.formData.phoneNumber === '') {
             newErrors.phoneNumber = this.props.intl.formatMessage({ id: "validate.phoneNumber" });
             hasErrors = true;
         }
-        if(this.state.formData.address === '') {
+        if (this.state.formData.address === '') {
             newErrors.address = this.props.intl.formatMessage({ id: "validate.address" });
             hasErrors = true;
         }
@@ -190,7 +193,7 @@ class UserRedux extends Component {
                 successMessage,
                 userCreationSuccessMessage
             );
-            
+
             // Reset form
             this.setState({
                 formData: {
@@ -217,7 +220,101 @@ class UserRedux extends Component {
             console.error('Error submitting form:', error);
         }
     };
+    handleEditFromParent = (user) => {
+        console.log("user Parent", user);
+        if (user.roleID === "R1") {
+            user.roleID = 1;
+            if (user.positionID === "P0") {
+                user.positionID = 0;
+            } else if (user.positionID === "P1") {
+                user.positionID = 1;
+            } else if (user.positionID === "P2") {
+                user.positionID = 2;
+            } else if (user.positionID === "P3") {
+                user.positionID = 3;
+            } else {
+                user.positionID = 4;
+            }
+        } else if (user.roleID === "R0") {
+            user.roleID = 0;
+            user.positionID = "";
+        } else if (user.roleID === "R2") {
+            user.roleID = 2;
+            user.positionID = "";
+        }
+        console.log("user Edit", user);
+        this.setState({
+            action: CRUD_ACTION.EDIT,
+            formData: {
+                id: user.id,
+                email: user.email,
+                password: "Hardcoded password",
+                firstname: user.firstName,
+                lastname: user.lastName,
+                gender: user.gender,
+                role: user.roleID,
+                position: user.positionID,
+                phoneNumber: user.phoneNumber,
+                address: user.address,
+                image: user.image,
+            }
+        });
+    }
+    handleUpdate = async (e) => {
+        const successMessage = this.props.intl.formatMessage({ id: "common.success" });
+        const errorMessage = this.props.intl.formatMessage({ id: "common.error" });
+        const userUpdateSuccessMessage = this.props.intl.formatMessage({ id: "system.user-manage.update-user-success" });
+        const userUpdateFailMessage = this.props.intl.formatMessage({ id: "system.user-manage.update-user-fail" });
+        e.preventDefault();
+        let formData = { ...this.state.formData };
+        if (formData.role !== "1") {
+            formData.position = "";
+        }
+        const user = {
+            id: formData.id,
+            firstName: formData.firstname,
+            lastName: formData.lastname,
+            gender: formData.gender,
+            roleID: formData.role,
+            positionID: formData.position,
+            phoneNumber: formData.phoneNumber,
+            address: formData.address,
+            image: formData.image,
+        }
+        try {
+            await this.props.updateUserStart(user);
+            await this.props.fetchAllUsersStart();
+            ToastUtil.success(
+                successMessage,
+                userUpdateSuccessMessage
+            );
+            this.handleReset();
+        } catch (error) {
+            console.error("Error updating user:", error);
+            ToastUtil.error(
+                errorMessage,
+                userUpdateFailMessage
+            );
+        }
 
+    }
+    handleReset = () => {
+        this.setState({
+            action: CRUD_ACTION.CREATE,
+            formData: {
+                email: "",
+                password: "",
+                firstname: "",
+                lastname: "",
+                gender: 0,
+                role: 2,
+                position: 0,
+                phoneNumber: "",
+                address: "",
+                image: null,
+            },
+        });
+    }
     render() {
         const { formData, errors } = this.state;
         let language = this.props.language;
@@ -250,6 +347,7 @@ class UserRedux extends Component {
                                         required
                                         isInvalid={!!errors.email}
                                         className="py-2"
+                                        disabled={this.state.action === CRUD_ACTION.EDIT}
                                         placeholder="Enter your email"
                                     />
                                     <Form.Control.Feedback type="invalid" className="d-block">
@@ -264,6 +362,7 @@ class UserRedux extends Component {
                                     <Form.Control
                                         type="password"
                                         name="password"
+                                        disabled={this.state.action === CRUD_ACTION.EDIT}
                                         value={formData.password}
                                         onChange={this.handleChange}
                                         required
@@ -384,7 +483,30 @@ class UserRedux extends Component {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
-                                    {formData.role === "1" && (
+                                    {formData.role === "1" && this.state.action === CRUD_ACTION.CREATE && (
+                                        <Col md={6}>
+                                            <Form.Group className="mb-4">
+                                                <Form.Label className="text-capitalize fw-medium">
+                                                    <FormattedMessage id="system.user-manage.position" defaultMessage="Position" />
+                                                </Form.Label>
+                                                <Form.Select
+                                                    name="position"
+                                                    value={formData.position}
+                                                    onChange={this.handleChange}
+                                                    className="py-2"
+                                                >
+                                                    {this.state.positions.map((position, index) => {
+                                                        return (
+                                                            <option key={index} value={index}>
+                                                                {language === LANGUAGES.VI ? position.value_Vi : position.value_En}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </Form.Select>
+                                            </Form.Group>
+                                        </Col>
+                                    )}
+                                    {this.state.action === CRUD_ACTION.EDIT && (
                                         <Col md={6}>
                                             <Form.Group className="mb-4">
                                                 <Form.Label className="text-capitalize fw-medium">
@@ -457,23 +579,39 @@ class UserRedux extends Component {
                                 <div className="text-center d-flex justify-content-center gap-3 mt-5">
                                     <Button
                                         type="submit"
-                                        className="px-5 py-2 fw-bold shadow-sm save-btn"
+                                        className={`px-5 py-2 fw-bold shadow-sm save-btn ${this.state.action === CRUD_ACTION.EDIT ? 'btn-warning' : 'btn-primary'}`}
                                         disabled={Object.values(errors).some(error => error !== '')}
-                                        onClick={this.handleSubmit}
+                                        onClick={this.state.action === CRUD_ACTION.EDIT ? this.handleUpdate : this.handleSubmit}
                                     >
                                         <FaSave className="me-2" />
-                                        <FormattedMessage id="system.user-manage.save" defaultMessage="Save" />
+                                        {this.state.action === CRUD_ACTION.EDIT ? (
+                                            <FormattedMessage id="system.user-manage.update" defaultMessage="Update" />
+                                        ) : (
+                                            <FormattedMessage id="system.user-manage.save" defaultMessage="Save" />
+                                        )}
                                     </Button>
+                                    {
+                                        this.state.action === CRUD_ACTION.EDIT && (
+                                            <Button
+                                                variant="danger"
+                                                onClick={this.handleReset}
+                                            >
+                                                <FormattedMessage id="system.user-manage.reset" defaultMessage="Return" />
+                                            </Button>
+                                        )
+                                    }
                                 </div>
                             </Form>
                         </Card>
                     </Col>
                 </Row>
-                <UserListShow 
-                    genders={this.state.genders} 
-                    positions={this.state.positions} 
+                <UserListShow
+                    genders={this.state.genders}
+                    positions={this.state.positions}
                     roles={this.state.roles}
                     language={this.props.language}
+                    handleEditFromParent={this.handleEditFromParent}
+                    action={this.state.action}
                 />
             </Container>
         );
@@ -495,7 +633,8 @@ const mapDispatchToProps = (dispatch) => {
         fetchPositionStart: () => dispatch(fetchPositionStart()),
         fetchRoleStart: () => dispatch(fetchRoleStart()),
         createUser: (data) => dispatch(createUser(data)),
-        fetchAllUsersStart: () => dispatch(fetchAllUsersStart())
+        fetchAllUsersStart: () => dispatch(fetchAllUsersStart()),
+        updateUserStart: (data) => dispatch(updateUserStart(data)),
     };
 };
 
