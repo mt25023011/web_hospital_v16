@@ -8,6 +8,7 @@ import { LANGUAGES } from "../../../utils";
 import { connect } from "react-redux";
 import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart } from "../../../store/actions/adminActions";
 import * as actions from "../../../store/actions";
+import UserListShow from "./UserListShow";
 
 class UserRedux extends Component {
     constructor(props) {
@@ -123,19 +124,35 @@ class UserRedux extends Component {
 
     handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Check if there are any errors
-        const hasErrors = Object.values(this.state.errors).some(error => error !== '');
-        if (hasErrors) {
+        if(this.state.formData.email === '') {
+            this.setState({ errors: { ...this.state.errors, email: this.props.intl.formatMessage({ id: "validate.email" }) } });
             return;
         }
-
+        if(this.state.formData.password === '') {
+            this.setState({ errors: { ...this.state.errors, password: this.props.intl.formatMessage({ id: "validate.password" }) } });
+            return;
+        }
+        if(this.state.formData.firstname === '') {
+            this.setState({ errors: { ...this.state.errors, firstname: this.props.intl.formatMessage({ id: "validate.firstName" }) } });
+            return;
+        }
+        if(this.state.formData.lastname === '') {
+            this.setState({ errors: { ...this.state.errors, lastname: this.props.intl.formatMessage({ id: "validate.lastName" }) } });
+            return;
+        }
+        if(this.state.formData.phoneNumber === '') {
+            this.setState({ errors: { ...this.state.errors, phoneNumber: this.props.intl.formatMessage({ id: "validate.phoneNumber" }) } });
+            return;
+        }
+        if(this.state.formData.address === '') {
+            this.setState({ errors: { ...this.state.errors, address: this.props.intl.formatMessage({ id: "validate.address" }) } });
+            return;
+        }
         try {
             let formData = { ...this.state.formData };
             if (formData.role !== "1") {
                 formData.position = "";
             }
-            console.log("formData", formData);
             let data = {
                 email: formData.email,
                 password: formData.password,
@@ -146,7 +163,7 @@ class UserRedux extends Component {
                 roleID: formData.role,
                 positionID: formData.position,
                 address: formData.address,
-                image: formData.image,
+                image: formData.image ? formData.image.name : "",
             }
             this.props.createUser(data);
             // Add your API call here
@@ -162,10 +179,10 @@ class UserRedux extends Component {
         let language = this.props.language;
 
         return (
-            <Container className="mt-5">
+            <Container className="mt-1">
                 <Row className="justify-content-center">
-                    <Col md={8} lg={6}>
-                        <Card className="shadow-lg p-4 rounded-4 border-0 bg-white">
+                    <Col md={12} lg={12}>
+                        <Card className="shadow-lg p-4 rounded-4 border-0 bg-white container-user">
                             <Card.Title className="text-center mb-5">
                                 <h3 className="fw-bold text-primary mb-0">
                                     <FormattedMessage id="system.user-manage.title" defaultMessage="User Registration" />
@@ -174,7 +191,7 @@ class UserRedux extends Component {
                                     <FormattedMessage id="system.user-manage.subtitle" defaultMessage="Please fill in the information below" />
                                 </div>
                             </Card.Title>
-                            <Form onSubmit={this.handleSubmit} className="needs-validation">
+                            <Form onSubmit={this.handleSubmit} encType="multipart/form-data" className="needs-validation">
                                 <Form.Group className="mb-4">
                                     <Form.Label className="text-capitalize fw-medium">
                                         <FormattedMessage id="system.user-manage.email" defaultMessage="Email" />
@@ -405,6 +422,7 @@ class UserRedux extends Component {
                         </Card>
                     </Col>
                 </Row>
+                <UserListShow />
             </Container>
         );
     }

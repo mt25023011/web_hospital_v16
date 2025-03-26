@@ -21,33 +21,18 @@ const userService = {
             if (data.hasOwnProperty(key)) {
                 formData.append(key, data[key]);
             }
-
         }
-        if (data.image && data.image instanceof File) {
-            const reader = new FileReader();
-            await new Promise((resolve, reject) => {
-                reader.onload = () => {
-                    formData.set('image', reader.result);
-                    resolve();
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(data.image);
-                console.log(data.image);
-            });
-        }
-        else {
-            formData.set('image', "");
-        }
-
-
+        
         return axios.post('/user/createuser', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         })
             .then((res) => {
-                console.log('Response from createUser:', res);
-                return res;
+                return {
+                    status: 201,
+                    data: res.data
+                };
             })
             .catch((error) => {
                 console.error('Error creating user:', error.response ? error.response.data : error.message);

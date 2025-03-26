@@ -21,9 +21,15 @@ export const userLoginFail = () => ({
 export const createUser = (data) => {
     return async (dispatch, getState) => {
         try {
-            console.log("data", data);
+            let res = await userService.createUser(data);
+            if (res && res.status === 201) {
+                dispatch(createUserSuccess(res.data));
+            } else {
+                dispatch(createUserFail(res.data));
+            }
         } catch (error) {
             console.log("error", error);
+            dispatch(createUserFail(error));
         }
     }
 }

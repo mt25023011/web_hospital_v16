@@ -37,48 +37,19 @@ let createNewUser = async (data) => {
         if(data.roleID) {
             data.roleID = `R${data.roleID === '1' ? '1' : data.roleID === '0' ? '0' : '2'}`;
         }
-        
+        if(data.positionID) {
+            data.positionID = `P${data.positionID==='0'?'0':data.positionID==='1'?'1':data.positionID==='2'?'2':data.positionID==='3'?'3':'4'}`;
+        }
         // Handle image upload
-        if(data.image) {
+        if(data.image!=='') {
             try {
-                // Validate base64 string
-                if (!data.image.startsWith('data:image/')) {
-                    throw new Error('Invalid image format. Image must be a valid base64 string starting with data:image/');
-                }
-
-                // Extract image data and extension
-                const matches = data.image.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
-                if (!matches || matches.length !== 3) {
-                    throw new Error('Invalid image format');
-                }
-
-                const imageExtension = matches[1];
-                const base64Data = matches[2];
-
-                // Create buffer from base64
-                const imageBuffer = Buffer.from(base64Data, 'base64');
-
-                // Generate unique filename
-                const fileName = `user-${Date.now()}.${imageExtension}`;
-                
-                // Define upload path
-                const uploadPath = path.join(__dirname, '../public/user/images');
-                
-                // Create directory if it doesn't exist
-                if (!fs.existsSync(uploadPath)) {
-                    fs.mkdirSync(uploadPath, { recursive: true });
-                }
-
-                // Save file
-                const filePath = path.join(uploadPath, fileName);
-                fs.writeFileSync(filePath, imageBuffer);
-
-                // Update image path in data
-                data.image = `/user/images/${fileName}`;
+                data.image = `/user/images/${data.image}`;
             } catch (error) {
                 console.error('Error processing image:', error);
                 throw new Error(`Image processing failed: ${error.message}`);
             }
+        }else{
+            data.image = '';
         }
 
         // Create new user in database
