@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Card, Container, Row, Col, Alert } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 import { LANGUAGES } from "../../../utils";
-
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./userRedux.css";
 import { connect } from "react-redux";
 import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetchAllUsersStart } from "../../../store/actions/adminActions";
 import * as actions from "../../../store/actions";
 import UserListShow from "./UserListShow";
+import {  FaSave, FaExclamationCircle } from 'react-icons/fa';
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./userRedux.css";
 
 class UserRedux extends Component {
     constructor(props) {
@@ -37,7 +38,8 @@ class UserRedux extends Component {
                 lastname: "",
                 address: "",
                 phoneNumber: "",
-            }
+            },
+            showSuccessAlert: false
         };
     }
 
@@ -125,30 +127,41 @@ class UserRedux extends Component {
 
     handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validate all fields
+        const newErrors = {};
+        let hasErrors = false;
+
         if(this.state.formData.email === '') {
-            this.setState({ errors: { ...this.state.errors, email: this.props.intl.formatMessage({ id: "validate.email" }) } });
-            return;
+            newErrors.email = this.props.intl.formatMessage({ id: "validate.email" });
+            hasErrors = true;
         }
         if(this.state.formData.password === '') {
-            this.setState({ errors: { ...this.state.errors, password: this.props.intl.formatMessage({ id: "validate.password" }) } });
-            return;
+            newErrors.password = this.props.intl.formatMessage({ id: "validate.password" });
+            hasErrors = true;
         }
         if(this.state.formData.firstname === '') {
-            this.setState({ errors: { ...this.state.errors, firstname: this.props.intl.formatMessage({ id: "validate.firstName" }) } });
-            return;
+            newErrors.firstname = this.props.intl.formatMessage({ id: "validate.firstName" });
+            hasErrors = true;
         }
         if(this.state.formData.lastname === '') {
-            this.setState({ errors: { ...this.state.errors, lastname: this.props.intl.formatMessage({ id: "validate.lastName" }) } });
-            return;
+            newErrors.lastname = this.props.intl.formatMessage({ id: "validate.lastName" });
+            hasErrors = true;
         }
         if(this.state.formData.phoneNumber === '') {
-            this.setState({ errors: { ...this.state.errors, phoneNumber: this.props.intl.formatMessage({ id: "validate.phoneNumber" }) } });
-            return;
+            newErrors.phoneNumber = this.props.intl.formatMessage({ id: "validate.phoneNumber" });
+            hasErrors = true;
         }
         if(this.state.formData.address === '') {
-            this.setState({ errors: { ...this.state.errors, address: this.props.intl.formatMessage({ id: "validate.address" }) } });
+            newErrors.address = this.props.intl.formatMessage({ id: "validate.address" });
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            this.setState({ errors: newErrors });
             return;
         }
+
         try {
             let formData = { ...this.state.formData };
             if (formData.role !== "1") {
@@ -167,6 +180,10 @@ class UserRedux extends Component {
                 image: formData.image ? formData.image.name : "",
             }
 
+            await this.props.createUser(data);
+            await this.props.fetchAllUsersStart();
+            
+            // Reset form
             this.setState({
                 formData: {
                     email: "",
@@ -180,26 +197,33 @@ class UserRedux extends Component {
                     address: "",
                     image: null,
                 },
+                showSuccessAlert: true
             });
-            this.props.createUser(data);
-            this.props.fetchAllUsersStart();
+
+            // Hide success alert after 3 seconds
             setTimeout(() => {
-                this.props.fetchAllUsersStart();
-            }, 500);
-            // Add your API call here
+                this.setState({ showSuccessAlert: false });
+            }, 3000);
+
         } catch (error) {
             console.error('Error submitting form:', error);
-            // Handle error appropriately
         }
     };
 
     render() {
         const { intl } = this.props;
-        const { formData, errors } = this.state;
+        const { formData, errors, showSuccessAlert } = this.state;
         let language = this.props.language;
 
         return (
-            <Container className="mt-1">
+            <Container className="mt-4">
+                {showSuccessAlert && (
+                    <Alert variant="success" className="mb-4" onClose={() => this.setState({ showSuccessAlert: false })} dismissible>
+                        <FaExclamationCircle className="me-2" />
+                        <FormattedMessage id="system.user-manage.success" defaultMessage="User created successfully!" />
+                    </Alert>
+                )}
+
                 <Row className="justify-content-center">
                     <Col md={12} lg={12}>
                         <Card className="shadow-lg p-4 rounded-4 border-0 bg-white container-user">
@@ -211,6 +235,7 @@ class UserRedux extends Component {
                                     <FormattedMessage id="system.user-manage.subtitle" defaultMessage="Please fill in the information below" />
                                 </div>
                             </Card.Title>
+
                             <Form onSubmit={this.handleSubmit} encType="multipart/form-data" className="needs-validation">
                                 <Form.Group className="mb-4">
                                     <Form.Label className="text-capitalize fw-medium">
@@ -435,6 +460,7 @@ class UserRedux extends Component {
                                         disabled={Object.values(errors).some(error => error !== '')}
                                         onClick={this.handleSubmit}
                                     >
+                                        <FaSave className="me-2" />
                                         <FormattedMessage id="system.user-manage.save" defaultMessage="Save" />
                                     </Button>
                                 </div>
