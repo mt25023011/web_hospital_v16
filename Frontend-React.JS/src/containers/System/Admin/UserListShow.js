@@ -11,6 +11,7 @@ import { LANGUAGES } from "../../../utils";
 import { ToastUtil } from "../../../utils";
 import ConfirmModal from "../../../components/ConfirmModal";
 import * as actions from "../../../store/actions";
+import { Buffer } from "buffer";
 
 class UserListShow extends Component {
     constructor(props) {
@@ -19,7 +20,7 @@ class UserListShow extends Component {
             genders: props.genders || [],
             positions: props.positions || [],
             roles: props.roles || [],
-            usersRedux: []
+            usersRedux: [],
         };
     }
     componentDidMount() {
@@ -38,6 +39,7 @@ class UserListShow extends Component {
         if (prevProps.roles !== this.props.roles) {
             this.setState({ roles: this.props.roles });
         }
+
     }
 
     handleDelete = (id) => {
@@ -155,6 +157,7 @@ class UserListShow extends Component {
                                 <thead>
                                     <tr className="bg-dark text-white">
                                         <th className="py-3 px-4 border-end">#</th>
+                                        <th className="py-3 px-4 border-end"><FormattedMessage id="system.user-manage.image" /></th>
                                         <th className="py-3 px-4 border-end"><FormattedMessage id="system.user-manage.username" /></th>
                                         <th className="py-3 px-4 border-end"><FormattedMessage id="system.user-manage.email" /></th>
                                         <th className="py-3 px-4 border-end"><FormattedMessage id="system.user-manage.phone-number" /></th>
@@ -174,6 +177,18 @@ class UserListShow extends Component {
                                         .map((item, index) => (
                                             <tr key={index} className="border-bottom">
                                                 <td className="py-3 px-4 border-end">{index + 1}</td>
+                                                <td className="py-3 px-4 border-end">
+                                                    {item.image && item.image.data ? (
+                                                        <img
+                                                            src={`${Buffer.from(item.image.data, 'base64').toString('binary')}`}
+                                                            alt="User"
+                                                            className="img-fluid rounded-circle"
+                                                            style={{ width: "40px", height: "40px" }}
+                                                        />
+                                                    ) : (
+                                                        <span>No Image</span> // Hiển thị nếu không có ảnh
+                                                    )}
+                                                </td>
                                                 <td className="py-3 px-4 border-end fw-medium">{item.firstName} {item.lastName}</td>
                                                 <td className="py-3 px-4 border-end">{item.email}</td>
                                                 <td className="py-3 px-4 border-end">{item.phoneNumber}</td>

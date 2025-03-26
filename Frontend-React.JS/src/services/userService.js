@@ -5,13 +5,13 @@ const userService = {
 
     getAllUsers() {
         let res = axios.get(`/user/getlistuser`);
-        console.log(res);
+
         return res;
     },
 
     deleteUser(id) {
         let res = axios.delete(`/user/deleteuser?id=${id}`);
-        console.log(res);
+
         return res;
     },
 
@@ -22,7 +22,7 @@ const userService = {
                 formData.append(key, data[key]);
             }
         }
-        
+
         return axios.post('/user/createuser', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -45,7 +45,7 @@ const userService = {
 
     getUserInfo(id) {
         let res = axios.get(`/user/getuserbyid?id=${id}`);
-        console.log(res);
+
         return res;
     },
     getAllCodesService(inputData) {

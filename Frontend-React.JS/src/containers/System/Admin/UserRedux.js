@@ -4,13 +4,13 @@ import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 import { LANGUAGES } from "../../../utils";
 import { connect } from "react-redux";
-import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetchAllUsersStart,  updateUserStart } from "../../../store/actions/adminActions";
+import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetchAllUsersStart, updateUserStart } from "../../../store/actions/adminActions";
 import * as actions from "../../../store/actions";
 import UserListShow from "./UserListShow";
 import { FaSave, FaExclamationCircle } from 'react-icons/fa';
 import ToastUtil from "../../../utils/ToastUtil";
 import { CRUD_ACTION } from "../../../utils/constant";
-
+import CommonUtils from "../../../utils/CommonUtils";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
 
@@ -110,7 +110,7 @@ class UserRedux extends Component {
         });
     };
 
-    handleImageChange = (e) => {
+    handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
             // Validate file size (max 5MB)
@@ -123,8 +123,9 @@ class UserRedux extends Component {
                 alert('File must be an image');
                 return;
             }
+            let base64 = await CommonUtils.getBase64(file);
             this.setState({
-                formData: { ...this.state.formData, image: file },
+                formData: { ...this.state.formData, image: file, imageBase64: base64 },
             });
         }
     };
@@ -184,9 +185,8 @@ class UserRedux extends Component {
                 roleID: formData.role,
                 positionID: formData.position,
                 address: formData.address,
-                image: formData.image ? formData.image.name : "",
+                image: formData.imageBase64,
             }
-
             await this.props.createUser(data);
             await this.props.fetchAllUsersStart();
             ToastUtil.success(
@@ -243,6 +243,10 @@ class UserRedux extends Component {
             user.positionID = "";
         }
         console.log("user Edit", user);
+        let imageBase64 = "";
+        if (user.image) {
+            imageBase64 = new Buffer(user.image, 'base64').toString('binary');
+        }
         this.setState({
             action: CRUD_ACTION.EDIT,
             formData: {
@@ -256,7 +260,8 @@ class UserRedux extends Component {
                 position: user.positionID,
                 phoneNumber: user.phoneNumber,
                 address: user.address,
-                image: user.image,
+                image: imageBase64,
+                imageBase64: imageBase64,
             }
         });
     }
@@ -267,9 +272,6 @@ class UserRedux extends Component {
         const userUpdateFailMessage = this.props.intl.formatMessage({ id: "system.user-manage.update-user-fail" });
         e.preventDefault();
         let formData = { ...this.state.formData };
-        if (formData.role !== "1") {
-            formData.position = "";
-        }
         const user = {
             id: formData.id,
             firstName: formData.firstname,
@@ -281,6 +283,7 @@ class UserRedux extends Component {
             address: formData.address,
             image: formData.image,
         }
+        console.log("user Update", user);
         try {
             await this.props.updateUserStart(user);
             await this.props.fetchAllUsersStart();
@@ -312,8 +315,10 @@ class UserRedux extends Component {
                 phoneNumber: "",
                 address: "",
                 image: null,
+                imageBase64: "",
             },
         });
+        this.props.fetchAllUsersStart();
     }
     render() {
         const { formData, errors } = this.state;
@@ -565,7 +570,7 @@ class UserRedux extends Component {
                                     {formData.image && (
                                         <div className="text-center mt-3">
                                             <img
-                                                src={URL.createObjectURL(formData.image)}
+                                                src={this.state.action === CRUD_ACTION.EDIT ? formData.imageBase64 : URL.createObjectURL(formData.image)}
                                                 alt="Preview"
                                                 className="rounded-circle shadow-sm border border-2 border-primary"
                                                 width={120}
