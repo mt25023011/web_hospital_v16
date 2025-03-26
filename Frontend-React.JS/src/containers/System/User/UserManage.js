@@ -98,7 +98,7 @@ class UserManage extends Component {
           refreshUserList={this.fetchUserList}
           currentUser={this.state.currentUser}
         />
-        <ConfirmModal /> {/* Ensure this is rendered */}
+        <ConfirmModal />
         <div className="title text-center">
           <FormattedMessage id="system.user-manage.manage-users" />
         </div>

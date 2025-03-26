@@ -7,7 +7,11 @@
     background-color: $colormain;
     color: $common-text-color;
     height: 40px;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 
     // Header tabs container (for navigation)
     .header-tabs-container {

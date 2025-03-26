@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { FormattedMessage, FormattedTime } from 'react-intl';
+import { FormattedMessage, FormattedTime, injectIntl } from 'react-intl';
 
 import CustomScrollBar from '../components/CustomScrollbars';
 
@@ -55,4 +55,4 @@ export class CustomToastCloseButton extends Component {
     }
 }
 
-export default CustomToast;
+export default injectIntl(CustomToast);

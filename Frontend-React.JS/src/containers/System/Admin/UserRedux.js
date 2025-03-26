@@ -8,6 +8,7 @@ import { createUser, fetchGenderStart, fetchPositionStart, fetchRoleStart, fetch
 import * as actions from "../../../store/actions";
 import UserListShow from "./UserListShow";
 import {  FaSave, FaExclamationCircle } from 'react-icons/fa';
+import ToastUtil from "../../../utils/ToastUtil";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
@@ -161,7 +162,10 @@ class UserRedux extends Component {
             this.setState({ errors: newErrors });
             return;
         }
-
+        const successMessage = this.props.intl.formatMessage({ id: "common.success" });
+        const errorMessage = this.props.intl.formatMessage({ id: "common.error" });
+        const userCreationSuccessMessage = this.props.intl.formatMessage({ id: "system.user-manage.add-user-success" });
+        const userCreationFailMessage = this.props.intl.formatMessage({ id: "system.user-manage.add-user-fail" });
         try {
             let formData = { ...this.state.formData };
             if (formData.role !== "1") {
@@ -182,6 +186,10 @@ class UserRedux extends Component {
 
             await this.props.createUser(data);
             await this.props.fetchAllUsersStart();
+            ToastUtil.success(
+                successMessage,
+                userCreationSuccessMessage
+            );
             
             // Reset form
             this.setState({
@@ -211,18 +219,11 @@ class UserRedux extends Component {
     };
 
     render() {
-        const { intl } = this.props;
-        const { formData, errors, showSuccessAlert } = this.state;
+        const { formData, errors } = this.state;
         let language = this.props.language;
 
         return (
             <Container className="mt-4">
-                {showSuccessAlert && (
-                    <Alert variant="success" className="mb-4" onClose={() => this.setState({ showSuccessAlert: false })} dismissible>
-                        <FaExclamationCircle className="me-2" />
-                        <FormattedMessage id="system.user-manage.success" defaultMessage="User created successfully!" />
-                    </Alert>
-                )}
 
                 <Row className="justify-content-center">
                     <Col md={12} lg={12}>

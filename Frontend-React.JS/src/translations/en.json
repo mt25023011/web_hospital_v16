@@ -19,7 +19,9 @@
         "sum": "Sum",
         "date-range-invalid": "Date range invalid",
         "success": "Success",
-        "error": "Error"
+        "error": "Error",
+        "success-delete-user": "Delete user successfully",
+        "error-delete-user": "Fail to delete user"
     },
     "validate": {
         "phoneNumber": "Phone number must be 10 digits",
@@ -28,7 +30,6 @@
         "firstName": "First name must be at least 3 characters",
         "lastName": "Last name must be at least 3 characters",
         "address": "Address must be at least 3 characters",
-        "phoneNumber": "Phone number must be 10 digits",
         "image": "Image must be an image"
     },
     "login": {

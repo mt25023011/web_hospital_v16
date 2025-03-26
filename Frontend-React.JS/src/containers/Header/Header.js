@@ -28,7 +28,7 @@ class Header extends Component {
         const { processLogout } = this.props;
 
         return (
-            <div className="header-container">
+            <div className="header-container ">
                 {/* thanh navigator */}
                 <div className="header-tabs-container">
                     <Navigator menus={adminMenu} />

@@ -1,6 +1,9 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { IntlProvider } from 'react-intl';
+import vi from '../translations/vi.json';
+import en from '../translations/en.json';
 
 import CustomToast from "../components/CustomToast";
 
@@ -8,6 +11,11 @@ const TYPE_SUCCESS = 'SUCCESS';
 const TYPE_INFO = 'INFO';
 const TYPE_WARN = 'WARN';
 const TYPE_ERROR = 'ERROR';
+
+const messages = {
+    vi: vi,
+    en: en
+};
 
 class ToastUtil {
 
@@ -63,7 +71,11 @@ class ToastUtil {
     }
 
     static show(type, title, message, rawMessage = false, autoCloseDelay = 3000) {
-        const content = <CustomToast titleId={title} messageId={rawMessage ? null : message} message={rawMessage ? message : null} time={new Date()} />;
+        const content = (
+            <IntlProvider messages={messages['vi']} locale="vi" defaultLocale="vi">
+                <CustomToast titleId={title} messageId={rawMessage ? null : message} message={rawMessage ? message : null} time={new Date()} />
+            </IntlProvider>
+        );
         const options = {
             position: toast.POSITION.BOTTOM_RIGHT,
             pauseOnHover: true,

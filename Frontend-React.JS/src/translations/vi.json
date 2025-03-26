@@ -19,7 +19,9 @@
         "sum": "Tổng",
         "date-range-invalid": "Khoảng thời gian không hợp lệ",
         "success": "Thành công",
-        "error": "Lỗi"
+        "error": "Lỗi",
+        "success-delete-user": "Xóa người dùng thành công",
+        "error-delete-user": "Xóa người dùng thất bại"
     },
     "validate": {
         "phoneNumber": "Số điện thoại phải có 10 số",
@@ -28,7 +30,6 @@
         "firstName": "Tên phải có từ 3 ký tự trở lên",
         "lastName": "Họ phải có từ 3 ký tự trở lên",
         "address": "Địa chỉ phải có từ 3 ký tự trở lên",
-        "phoneNumber": "Số điện thoại phải có 10 số",
         "image": "Ảnh đại diện phải là ảnh"
     },
     "login": {

@@ -8,6 +8,9 @@ import { fetchAllUsersStart, deleteUserStart } from "../../../store/actions/admi
 import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 import { LANGUAGES } from "../../../utils";
+import { ToastUtil } from "../../../utils";
+import ConfirmModal from "../../../components/ConfirmModal";
+import * as actions from "../../../store/actions";
 
 class UserListShow extends Component {
     constructor(props) {
@@ -38,15 +41,44 @@ class UserListShow extends Component {
     }
 
     handleDelete = (id) => {
-        this.props.deleteUserStart(id);
-        setTimeout(() => {
-            this.props.fetchAllUsersStart();
-        }, 500);
+        const { intl } = this.props;
+        const userToDelete = this.state.usersRedux.find((user) => user.id === id);
+
+        if (!userToDelete) {
+            ToastUtil.error(
+                intl.formatMessage({ id: "common.error" }),
+                intl.formatMessage({ id: "system.user-manage.del-user-fail" })
+            );
+            return;
+        }
+
+        this.props.setContentOfConfirmModal({
+            isOpen: true,
+            messageId: "system.user-manage.sure-delete-user",
+            status: "danger",
+            handleFunc: () => {
+                let res = this.props.deleteUserStart(id);
+                if (res) {
+                    ToastUtil.success(
+                        intl.formatMessage({ id: "common.success" }),
+                        intl.formatMessage({ id: "system.user-manage.del-user-success" })
+                    );
+                    setTimeout(() => {
+                        this.props.fetchAllUsersStart();
+                    }, 500);
+                } else {
+                    ToastUtil.error(
+                        intl.formatMessage({ id: "common.error" }),
+                        intl.formatMessage({ id: "system.user-manage.del-user-fail" })
+                    );
+                }
+            },
+        });
     };
 
     getRoleIcon = (roleId) => {
         if (!roleId) return <FaUser className="me-1" />;
-        switch(roleId) {
+        switch (roleId) {
             case "R0": return <FaUserShield className="me-1" />;    // Admin
             case "R1": return <FaUserMd className="me-1" />;        // Doctor
             case "R2": return <FaUserSecret className="me-1" />;    // Patient
@@ -55,7 +87,7 @@ class UserListShow extends Component {
     }
 
     getRoleColor = (roleId) => {
-        switch(roleId) {
+        switch (roleId) {
             case "R0": return "danger";     // Admin - Đỏ
             case "R1": return "primary";    // Doctor - Xanh dương
             case "R2": return "success";    // Patient - Xanh lá
@@ -65,7 +97,7 @@ class UserListShow extends Component {
 
     getGenderIcon = (gender) => {
         if (gender === null || gender === undefined) return <FaUser className="me-1" />;
-        switch(gender) {
+        switch (gender) {
             case 1: return <FaMars className="me-1" />;     // Nam
             case 0: return <FaVenus className="me-1" />;    // Nữ
             default: return <FaUser className="me-1" />;
@@ -73,7 +105,7 @@ class UserListShow extends Component {
     }
 
     getGenderColor = (gender) => {
-        switch(gender) {
+        switch (gender) {
             case 1: return "info";      // Nam - Xanh nhạt
             case 0: return "warning";   // Nữ - Vàng
             default: return "secondary";
@@ -82,7 +114,7 @@ class UserListShow extends Component {
 
     getPositionIcon = (positionId) => {
         if (!positionId) return <FaUser className="me-1" />;
-        switch(positionId) {
+        switch (positionId) {
             case "P0": return <FaStethoscope className="me-1" />;      // Bác sĩ
             case "P1": return <FaUserGraduate className="me-1" />;     // Thạc sĩ
             case "P2": return <FaGraduationCap className="me-1" />;    // Tiến sĩ
@@ -93,7 +125,7 @@ class UserListShow extends Component {
     }
 
     getPositionColor = (positionId) => {
-        switch(positionId) {
+        switch (positionId) {
             case "P0": return "primary";    // Bác sĩ
             case "P1": return "info";       // Thạc sĩ
             case "P2": return "success";    // Tiến sĩ
@@ -106,6 +138,7 @@ class UserListShow extends Component {
     render() {
         return (
             <Container className="mt-4">
+                <ConfirmModal />
                 <Card className="shadow-sm border-0 rounded-4">
                     <Card.Header className="bg-white border-0 py-4">
                         <h4 className="mb-0 fw-bold text-primary text-center">
@@ -135,76 +168,76 @@ class UserListShow extends Component {
                                             return new Date(b.createdAt) - new Date(a.createdAt);
                                         })
                                         .map((item, index) => (
-                                        <tr key={index} className="border-bottom">
-                                            <td className="py-3 px-4 border-end">{index+1}</td>
-                                            <td className="py-3 px-4 border-end fw-medium">{item.firstName} {item.lastName}</td>
-                                            <td className="py-3 px-4 border-end">{item.email}</td>
-                                            <td className="py-3 px-4 border-end">{item.phoneNumber}</td>
-                                            <td className="py-3 px-4 border-end">{item.address}</td>
-                                            <td className="py-3 px-4 border-end">
-                                                <Badge 
-                                                    bg={this.getGenderColor(item.gender)}
-                                                    className="d-flex align-items-center justify-content-center gap-1"
-                                                >
-                                                    {this.getGenderIcon(item.gender)}
-                                                    {this.props.genders.find(gender => 
-                                                        gender && gender.key && item.gender !== null && 
-                                                        parseInt(gender.key) === parseInt(item.gender)) ? 
-                                                    (this.props.language === LANGUAGES.VI ? 
-                                                        this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_Vi : 
-                                                        this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_En) 
-                                                    : ''}
-                                                </Badge>
-                                            </td>
-                                            <td className="py-3 px-4 border-end">
-                                                <Badge 
-                                                    bg={this.getRoleColor(item.roleID)}
-                                                    className="d-flex align-items-center justify-content-center gap-1"
-                                                >
-                                                    {this.getRoleIcon(item.roleID)}
-                                                    {this.props.roles.find(role => role.key === item.roleID) ? 
-                                                    (this.props.language === LANGUAGES.VI ? 
-                                                        this.props.roles.find(role => role.key === item.roleID).value_Vi : 
-                                                        this.props.roles.find(role => role.key === item.roleID).value_En) 
-                                                    : ''}
-                                                </Badge>
-                                            </td>
-                                            <td className="py-3 px-4 border-end">
-                                                <Badge 
-                                                    bg={this.getPositionColor(item.positionID)}
-                                                    className="d-flex align-items-center justify-content-center gap-1"
-                                                >
-                                                    {this.getPositionIcon(item.positionID)}
-                                                    {this.props.positions.find(position => position.key === item.positionID) ? 
-                                                    (this.props.language === LANGUAGES.VI ? 
-                                                        this.props.positions.find(position => position.key === item.positionID).value_Vi : 
-                                                        this.props.positions.find(position => position.key === item.positionID).value_En) 
-                                                    : ''}
-                                                </Badge>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <div className="d-flex justify-content-center gap-2">
-                                                    <Button 
-                                                        variant="outline-primary" 
-                                                        size="sm"
-                                                        className="d-flex align-items-center gap-1"
+                                            <tr key={index} className="border-bottom">
+                                                <td className="py-3 px-4 border-end">{index + 1}</td>
+                                                <td className="py-3 px-4 border-end fw-medium">{item.firstName} {item.lastName}</td>
+                                                <td className="py-3 px-4 border-end">{item.email}</td>
+                                                <td className="py-3 px-4 border-end">{item.phoneNumber}</td>
+                                                <td className="py-3 px-4 border-end">{item.address}</td>
+                                                <td className="py-3 px-4 border-end">
+                                                    <Badge
+                                                        bg={this.getGenderColor(item.gender)}
+                                                        className="d-flex align-items-center justify-content-center gap-1"
                                                     >
-                                                        <FaEdit />
-                                                        <FormattedMessage id="system.user-manage.edit" />
-                                                    </Button>
-                                                    <Button 
-                                                        variant="outline-danger" 
-                                                        size="sm"
-                                                        className="d-flex align-items-center gap-1"
-                                                        onClick={() => this.handleDelete(item.id)}
+                                                        {this.getGenderIcon(item.gender)}
+                                                        {this.props.genders.find(gender =>
+                                                            gender && gender.key && item.gender !== null &&
+                                                            parseInt(gender.key) === parseInt(item.gender)) ?
+                                                            (this.props.language === LANGUAGES.VI ?
+                                                                this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_Vi :
+                                                                this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_En)
+                                                            : ''}
+                                                    </Badge>
+                                                </td>
+                                                <td className="py-3 px-4 border-end">
+                                                    <Badge
+                                                        bg={this.getRoleColor(item.roleID)}
+                                                        className="d-flex align-items-center justify-content-center gap-1"
                                                     >
-                                                        <FaTrash />
-                                                        <FormattedMessage id="system.user-manage.delete" />
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                        {this.getRoleIcon(item.roleID)}
+                                                        {this.props.roles.find(role => role.key === item.roleID) ?
+                                                            (this.props.language === LANGUAGES.VI ?
+                                                                this.props.roles.find(role => role.key === item.roleID).value_Vi :
+                                                                this.props.roles.find(role => role.key === item.roleID).value_En)
+                                                            : ''}
+                                                    </Badge>
+                                                </td>
+                                                <td className="py-3 px-4 border-end">
+                                                    <Badge
+                                                        bg={this.getPositionColor(item.positionID)}
+                                                        className="d-flex align-items-center justify-content-center gap-1"
+                                                    >
+                                                        {this.getPositionIcon(item.positionID)}
+                                                        {this.props.positions.find(position => position.key === item.positionID) ?
+                                                            (this.props.language === LANGUAGES.VI ?
+                                                                this.props.positions.find(position => position.key === item.positionID).value_Vi :
+                                                                this.props.positions.find(position => position.key === item.positionID).value_En)
+                                                            : ''}
+                                                    </Badge>
+                                                </td>
+                                                <td className="py-3 px-4">
+                                                    <div className="d-flex justify-content-center gap-2">
+                                                        <Button
+                                                            variant="outline-primary"
+                                                            size="sm"
+                                                            className="d-flex align-items-center gap-1"
+                                                        >
+                                                            <FaEdit />
+                                                            <FormattedMessage id="system.user-manage.edit" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline-danger"
+                                                            size="sm"
+                                                            className="d-flex align-items-center gap-1"
+                                                            onClick={() => this.handleDelete(item.id)}
+                                                        >
+                                                            <FaTrash />
+                                                            <FormattedMessage id="system.user-manage.delete" />
+                                                        </Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </Table>
                         </div>
@@ -222,7 +255,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         fetchAllUsersStart: () => dispatch(fetchAllUsersStart()),
-        deleteUserStart: (id) => dispatch(deleteUserStart(id))
+        deleteUserStart: (id) => dispatch(deleteUserStart(id)),
+        setContentOfConfirmModal: (contentOfConfirmModal) => dispatch(actions.setContentOfConfirmModal(contentOfConfirmModal)),
     }
 }
 
