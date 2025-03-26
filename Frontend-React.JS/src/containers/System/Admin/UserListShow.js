@@ -21,6 +21,7 @@ class UserListShow extends Component {
             positions: props.positions || [],
             roles: props.roles || [],
             usersRedux: [],
+            isDeleting: false,
         };
     }
     componentDidMount() {
@@ -42,7 +43,7 @@ class UserListShow extends Component {
 
     }
 
-    handleDelete = (id) => {
+    handleDelete = async (id) => {
         const { intl } = this.props;
         const userToDelete = this.state.usersRedux.find((user) => user.id === id);
 
@@ -58,9 +59,10 @@ class UserListShow extends Component {
             isOpen: true,
             messageId: "system.user-manage.sure-delete-user",
             status: "danger",
-            handleFunc: () => {
-                let res = this.props.deleteUserStart(id);
-                if (res) {
+            handleFunc: async () => {
+                this.setState({ isDeleting: true });
+                try {
+                    await this.props.deleteUserStart(id);
                     ToastUtil.success(
                         intl.formatMessage({ id: "common.success" }),
                         intl.formatMessage({ id: "system.user-manage.del-user-success" })
@@ -68,11 +70,13 @@ class UserListShow extends Component {
                     setTimeout(() => {
                         this.props.fetchAllUsersStart();
                     }, 500);
-                } else {
+                } catch (error) {
                     ToastUtil.error(
                         intl.formatMessage({ id: "common.error" }),
                         intl.formatMessage({ id: "system.user-manage.del-user-fail" })
                     );
+                } finally {
+                    this.setState({ isDeleting: false });
                 }
             },
         });
@@ -250,8 +254,13 @@ class UserListShow extends Component {
                                                             size="sm"
                                                             className="d-flex align-items-center gap-1"
                                                             onClick={() => this.handleDelete(item.id)}
+                                                            disabled={this.state.isDeleting}
                                                         >
-                                                            <FaTrash />
+                                                            {this.state.isDeleting ? (
+                                                                <span className="spinner-border spinner-border-sm me-1" />
+                                                            ) : (
+                                                                <FaTrash />
+                                                            )}
                                                             <FormattedMessage id="system.user-manage.delete" />
                                                         </Button>
                                                     </div>

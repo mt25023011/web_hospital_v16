@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Button, Card, Container, Row, Col, Alert } from "react-bootstrap";
+import { Form, Button, Card, Container, Row, Col, Alert, Modal } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 import { LANGUAGES } from "../../../utils";
@@ -13,6 +13,7 @@ import { CRUD_ACTION } from "../../../utils/constant";
 import CommonUtils from "../../../utils/CommonUtils";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
+import { validateUser } from '../../../services/validationService';
 
 class UserRedux extends Component {
     constructor(props) {
@@ -43,7 +44,9 @@ class UserRedux extends Component {
                 address: "",
                 phoneNumber: "",
             },
-            showSuccessAlert: false
+            showSuccessAlert: false,
+            isSubmitting: false,
+            showConfirmReturn: false,
         };
     }
 
@@ -64,38 +67,27 @@ class UserRedux extends Component {
         }
     }
 
-    validateEmail = (email) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-
-    validatePassword = (password) => {
-        return password.length >= 6;
-    }
-
     handleChange = (e) => {
         const { name, value } = e.target;
         let errors = { ...this.state.errors };
 
-        // Validate fields
+        // Validate fields using service
         switch (name) {
             case 'email':
-                errors.email = this.validateEmail(value) ? '' : this.props.intl.formatMessage({ id: "validate.email" });
+                errors.email = validateUser.email(value) ? '' : this.props.intl.formatMessage({ id: "validate.email" });
                 break;
             case 'password':
-                errors.password = this.validatePassword(value) ? '' : this.props.intl.formatMessage({ id: "validate.password" });
+                errors.password = validateUser.password(value) ? '' : this.props.intl.formatMessage({ id: "validate.password" });
                 break;
             case 'firstname':
-                errors.firstname = value.length < 2 ? this.props.intl.formatMessage({ id: "validate.firstName" }) : '';
-                break;
             case 'lastname':
-                errors.lastname = value.length < 2 ? this.props.intl.formatMessage({ id: "validate.lastName" }) : '';
+                errors[name] = validateUser.name(value) ? '' : this.props.intl.formatMessage({ id: `validate.${name}` });
                 break;
             case 'address':
-                errors.address = value.length < 5 ? this.props.intl.formatMessage({ id: "validate.address" }) : '';
+                errors.address = validateUser.address(value) ? '' : this.props.intl.formatMessage({ id: "validate.address" });
                 break;
             case 'phoneNumber':
-                errors.phoneNumber = value.length < 10 ? this.props.intl.formatMessage({ id: "validate.phoneNumber" }) : '';
+                errors.phoneNumber = validateUser.phoneNumber(value) ? '' : this.props.intl.formatMessage({ id: "validate.phoneNumber" });
                 break;
             default:
                 break;
@@ -133,43 +125,19 @@ class UserRedux extends Component {
     handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate all fields
-        const newErrors = {};
-        let hasErrors = false;
+        // Validate form using service
+        const { isValid, errors } = validateUser.validateForm(this.state.formData, this.props.intl);
 
-        if (this.state.formData.email === '') {
-            newErrors.email = this.props.intl.formatMessage({ id: "validate.email" });
-            hasErrors = true;
-        }
-        if (this.state.formData.password === '') {
-            newErrors.password = this.props.intl.formatMessage({ id: "validate.password" });
-            hasErrors = true;
-        }
-        if (this.state.formData.firstname === '') {
-            newErrors.firstname = this.props.intl.formatMessage({ id: "validate.firstName" });
-            hasErrors = true;
-        }
-        if (this.state.formData.lastname === '') {
-            newErrors.lastname = this.props.intl.formatMessage({ id: "validate.lastName" });
-            hasErrors = true;
-        }
-        if (this.state.formData.phoneNumber === '') {
-            newErrors.phoneNumber = this.props.intl.formatMessage({ id: "validate.phoneNumber" });
-            hasErrors = true;
-        }
-        if (this.state.formData.address === '') {
-            newErrors.address = this.props.intl.formatMessage({ id: "validate.address" });
-            hasErrors = true;
-        }
-
-        if (hasErrors) {
-            this.setState({ errors: newErrors });
+        if (!isValid) {
+            this.setState({ errors });
             return;
         }
+
+        this.setState({ isSubmitting: true }); // Start loading
+
         const successMessage = this.props.intl.formatMessage({ id: "common.success" });
-        const errorMessage = this.props.intl.formatMessage({ id: "common.error" });
         const userCreationSuccessMessage = this.props.intl.formatMessage({ id: "system.user-manage.add-user-success" });
-        const userCreationFailMessage = this.props.intl.formatMessage({ id: "system.user-manage.add-user-fail" });
+
         try {
             let formData = { ...this.state.formData };
             if (formData.role !== "1") {
@@ -189,35 +157,18 @@ class UserRedux extends Component {
             }
             await this.props.createUser(data);
             await this.props.fetchAllUsersStart();
-            ToastUtil.success(
-                successMessage,
-                userCreationSuccessMessage
-            );
 
-            // Reset form
-            this.setState({
-                formData: {
-                    email: "",
-                    password: "",
-                    firstname: "",
-                    lastname: "",
-                    gender: 0,
-                    role: 2,
-                    position: 0,
-                    phoneNumber: "",
-                    address: "",
-                    image: null,
-                },
-                showSuccessAlert: true
-            });
-
-            // Hide success alert after 3 seconds
-            setTimeout(() => {
-                this.setState({ showSuccessAlert: false });
-            }, 3000);
+            ToastUtil.success(successMessage, userCreationSuccessMessage);
+            this.handleReset();
 
         } catch (error) {
             console.error('Error submitting form:', error);
+            ToastUtil.error(
+                this.props.intl.formatMessage({ id: "common.error" }),
+                this.props.intl.formatMessage({ id: "system.user-manage.add-user-fail" })
+            );
+        } finally {
+            this.setState({ isSubmitting: false }); // End loading
         }
     };
     handleEditFromParent = (user) => {
@@ -266,40 +217,39 @@ class UserRedux extends Component {
         });
     }
     handleUpdate = async (e) => {
+        e.preventDefault();
+        this.setState({ isSubmitting: true }); // Thêm loading state
+
         const successMessage = this.props.intl.formatMessage({ id: "common.success" });
         const errorMessage = this.props.intl.formatMessage({ id: "common.error" });
         const userUpdateSuccessMessage = this.props.intl.formatMessage({ id: "system.user-manage.update-user-success" });
         const userUpdateFailMessage = this.props.intl.formatMessage({ id: "system.user-manage.update-user-fail" });
-        e.preventDefault();
-        let formData = { ...this.state.formData };
-        const user = {
-            id: formData.id,
-            firstName: formData.firstname,
-            lastName: formData.lastname,
-            gender: formData.gender,
-            roleID: formData.role,
-            positionID: formData.position,
-            phoneNumber: formData.phoneNumber,
-            address: formData.address,
-            image: formData.image,
-        }
-        console.log("user Update", user);
+
         try {
+            let formData = { ...this.state.formData };
+            const user = {
+                id: formData.id,
+                firstName: formData.firstname,
+                lastName: formData.lastname,
+                gender: formData.gender,
+                roleID: formData.role,
+                positionID: formData.position,
+                phoneNumber: formData.phoneNumber,
+                address: formData.address,
+                image: formData.image,
+            }
+
             await this.props.updateUserStart(user);
             await this.props.fetchAllUsersStart();
-            ToastUtil.success(
-                successMessage,
-                userUpdateSuccessMessage
-            );
+
+            ToastUtil.success(successMessage, userUpdateSuccessMessage);
             this.handleReset();
         } catch (error) {
             console.error("Error updating user:", error);
-            ToastUtil.error(
-                errorMessage,
-                userUpdateFailMessage
-            );
+            ToastUtil.error(errorMessage, userUpdateFailMessage);
+        } finally {
+            this.setState({ isSubmitting: false }); // Kết thúc loading state
         }
-
     }
     handleReset = () => {
         this.setState({
@@ -320,6 +270,19 @@ class UserRedux extends Component {
         });
         this.props.fetchAllUsersStart();
     }
+    handleReturnClick = () => {
+        this.setState({ showConfirmReturn: true });
+    };
+
+    handleConfirmReturn = () => {
+        this.handleReset();
+        this.setState({ showConfirmReturn: false });
+    };
+
+    handleCancelReturn = () => {
+        this.setState({ showConfirmReturn: false });
+    };
+
     render() {
         const { formData, errors } = this.state;
         let language = this.props.language;
@@ -340,46 +303,50 @@ class UserRedux extends Component {
                             </Card.Title>
 
                             <Form onSubmit={this.handleSubmit} encType="multipart/form-data" className="needs-validation">
-                                <Form.Group className="mb-4">
-                                    <Form.Label className="text-capitalize fw-medium">
-                                        <FormattedMessage id="system.user-manage.email" defaultMessage="Email" />
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={this.handleChange}
-                                        required
-                                        isInvalid={!!errors.email}
-                                        className="py-2"
-                                        disabled={this.state.action === CRUD_ACTION.EDIT}
-                                        placeholder="Enter your email"
-                                    />
-                                    <Form.Control.Feedback type="invalid" className="d-block">
-                                        {errors.email}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-
-                                <Form.Group className="mb-4">
-                                    <Form.Label className="text-capitalize fw-medium">
-                                        <FormattedMessage id="system.user-manage.password" defaultMessage="Password" />
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="password"
-                                        name="password"
-                                        disabled={this.state.action === CRUD_ACTION.EDIT}
-                                        value={formData.password}
-                                        onChange={this.handleChange}
-                                        required
-                                        isInvalid={!!errors.password}
-                                        className="py-2"
-                                        placeholder="Enter your password"
-                                    />
-                                    <Form.Control.Feedback type="invalid" className="d-block">
-                                        {errors.password}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-
+                                <Row>
+                                    <Col>
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
+                                                <FormattedMessage id="system.user-manage.email" defaultMessage="Email" />
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={this.handleChange}
+                                                required
+                                                isInvalid={!!errors.email}
+                                                className="py-2"
+                                                disabled={this.state.action === CRUD_ACTION.EDIT}
+                                                placeholder="Enter your email"
+                                            />
+                                            <Form.Control.Feedback type="invalid" className="d-block">
+                                                {errors.email}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Form.Group className="mb-4">
+                                            <Form.Label className="text-capitalize fw-medium">
+                                                <FormattedMessage id="system.user-manage.password" defaultMessage="Password" />
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="password"
+                                                name="password"
+                                                disabled={this.state.action === CRUD_ACTION.EDIT}
+                                                value={formData.password}
+                                                onChange={this.handleChange}
+                                                required
+                                                isInvalid={!!errors.password}
+                                                className="py-2"
+                                                placeholder="Enter your password"
+                                            />
+                                            <Form.Control.Feedback type="invalid" className="d-block">
+                                                {errors.password}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
                                 <Row className="g-4">
                                     <Col>
                                         <Form.Group className="mb-4">
@@ -585,10 +552,14 @@ class UserRedux extends Component {
                                     <Button
                                         type="submit"
                                         className={`px-5 py-2 fw-bold shadow-sm save-btn ${this.state.action === CRUD_ACTION.EDIT ? 'btn-warning' : 'btn-primary'}`}
-                                        disabled={Object.values(errors).some(error => error !== '')}
+                                        disabled={Object.values(errors).some(error => error !== '') || this.state.isSubmitting}
                                         onClick={this.state.action === CRUD_ACTION.EDIT ? this.handleUpdate : this.handleSubmit}
                                     >
-                                        <FaSave className="me-2" />
+                                        {this.state.isSubmitting ? (
+                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        ) : (
+                                            <FaSave className="me-2" />
+                                        )}
                                         {this.state.action === CRUD_ACTION.EDIT ? (
                                             <FormattedMessage id="system.user-manage.update" defaultMessage="Update" />
                                         ) : (
@@ -599,7 +570,7 @@ class UserRedux extends Component {
                                         this.state.action === CRUD_ACTION.EDIT && (
                                             <Button
                                                 variant="danger"
-                                                onClick={this.handleReset}
+                                                onClick={this.handleReturnClick}
                                             >
                                                 <FormattedMessage id="system.user-manage.reset" defaultMessage="Return" />
                                             </Button>
@@ -618,6 +589,45 @@ class UserRedux extends Component {
                     handleEditFromParent={this.handleEditFromParent}
                     action={this.state.action}
                 />
+
+                <Modal
+                    show={this.state.showConfirmReturn}
+                    onHide={this.handleCancelReturn}
+                    centered
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            <FormattedMessage id="system.user-manage.confirm-title" defaultMessage="Confirm Return" />
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="text-center">
+                            <FaExclamationCircle className="text-warning mb-3" size={50} />
+                            <p>
+                                <FormattedMessage
+                                    id="system.user-manage.confirm-message"
+                                    defaultMessage="Are you sure you want to return? All unsaved changes will be lost."
+                                />
+                            </p>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer className="justify-content-center">
+                        <Button
+                            variant="secondary"
+                            onClick={this.handleCancelReturn}
+                            className="px-4"
+                        >
+                            <FormattedMessage id="system.user-manage.cancel" defaultMessage="Cancel" />
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={this.handleConfirmReturn}
+                            className="px-4"
+                        >
+                            <FormattedMessage id="system.user-manage.confirm" defaultMessage="Confirm" />
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </Container>
         );
     }

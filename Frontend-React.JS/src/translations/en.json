@@ -117,7 +117,11 @@
             "profile-image": "Profile image",
             "update": "Update",
             "update-user": "Update user",
-            "reset": "Return"
+            "reset": "Return",
+            "confirm-title": "Confirm Return",
+            "confirm-message": "Are you sure you want to return? All unsaved changes will be lost.",
+            "cancel": "Cancel",
+            "confirm": "Confirm"
         },
         "product-manage": {
             "fail-to-load-foprtype": "Fail to load packages list",

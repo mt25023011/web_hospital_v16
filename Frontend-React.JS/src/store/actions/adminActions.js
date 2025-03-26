@@ -133,12 +133,12 @@ export const fetchAllUsersStart = () => {
     return async (dispatch, getState) => {
         try {
             let res = await userService.getAllUsers();
-            let users={
+            let users = {
                 data: res,
                 isLoading: false,
                 message: "Fetch all users successfully"
             }
-            if (users&&users.data) {
+            if (users && users.data) {
                 dispatch(fetchAllUsersSuccess(users.data));
             } else {
                 dispatch(fetchAllUsersFail(users.data));
@@ -153,7 +153,10 @@ export const fetchAllUsersStart = () => {
 //delete user
 export const deleteUserSuccess = (data) => ({
     type: actionTypes.FETCH_DELETE_USER_SUCCESS,
-    data: data
+    data: data,
+    isLoading: false,
+    status: data.status,
+    message: data.message
 })
 
 export const deleteUserFail = (error) => ({
@@ -165,12 +168,12 @@ export const deleteUserStart = (id) => {
     return async (dispatch, getState) => {
         try {
             let res = await userService.deleteUser(id);
-            let users={
+            let users = {
                 status: res.status,
                 message: res.message
             }
             console.log("users", users);
-            if (users&&users.status===200) {
+            if (users && users.status === 200) {
                 dispatch(deleteUserSuccess(users));
             } else {
                 dispatch(deleteUserFail(users));
@@ -196,13 +199,13 @@ export const updateUserFail = (error) => ({
 export const updateUserStart = (data) => {
     return async (dispatch, getState) => {
         try {
-            let res = await userService.updateUser(data);   
-            let users={
+            let res = await userService.updateUser(data);
+            let users = {
                 status: res.status,
                 message: res.message
             }
             console.log("users", users);
-            if (users&&users.status===200) {
+            if (users && users.status === 200) {
                 dispatch(updateUserSuccess(users));
             } else {
                 dispatch(updateUserFail(users));

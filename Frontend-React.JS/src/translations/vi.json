@@ -117,7 +117,11 @@
             "profile-image": "Ảnh đại diện",
             "update": "Cập nhật",
             "update-user": "Cập nhật người dùng",
-            "reset": "Trở lại"
+            "reset": "Trở lại",
+            "confirm-title": "Xác nhận trở lại",
+            "confirm-message": "Bạn có chắc chắn muốn trở lại? Tất cả thông tin chưa lưu sẽ bị xóa.",
+            "cancel": "Hủy bỏ",
+            "confirm": "Xác nhận"
         },
         "product-manage": {
             "fail-to-load-foprtype": "Không thể tải về danh sách gói",
