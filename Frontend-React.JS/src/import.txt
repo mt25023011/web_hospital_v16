@@ -27,3 +27,5 @@ INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.va
 INSERT INTO allcodes (allcodes.type,allcodes.key, allcodes.value_En, allcodes.value_Vi) values ('GENDER','1','Male', 'Nam' ); 
 
 INSERT INTO users (users.email, users.password) VALUES ('admin1@admin.com','$2a$12$NxjKonGT0.WONAznBvXz9e/UdVXWoxniVSRMEujjyeVkw1zCoyb1G');
+
+npx sequelize db:create
