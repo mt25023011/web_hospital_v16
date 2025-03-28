@@ -57,6 +57,8 @@ let initWebRoutes = (app) => {
     //
     router.get('/allcodes', allCodesController.getAllCodes);
 
+    // user Role
+    router.get('/api/user/getrole', userController.getUserRole);
     return app.use('/', router);
 }
 

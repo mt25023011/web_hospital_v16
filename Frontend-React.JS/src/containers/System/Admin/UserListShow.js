@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
-import { Table, Button, Container, Card, Badge } from "react-bootstrap";
-import { FaEdit, FaTrash, FaUserShield, FaUserMd, FaUser, FaGraduationCap, FaUserGraduate, FaUserTie, FaChalkboardTeacher, FaStethoscope, FaMars, FaVenus, FaUserSecret } from "react-icons/fa";
+import { Table, Button, Container, Card, Badge, Spinner, Alert } from "react-bootstrap";
+import { FaEdit, FaTrash, FaUserShield, FaUserMd, FaUser, FaGraduationCap, FaUserGraduate, FaUserTie, FaChalkboardTeacher, FaStethoscope, FaMars, FaVenus, FaUserSecret, FaExclamationTriangle } from "react-icons/fa";
 import { connect } from "react-redux";
 import { fetchAllUsersStart, deleteUserStart } from "../../../store/actions/adminActions";
 import { FormattedMessage } from "react-intl";
@@ -22,14 +22,22 @@ class UserListShow extends Component {
             roles: props.roles || [],
             usersRedux: [],
             isDeleting: false,
+            isLoading: true,
+            error: null
         };
     }
+
     componentDidMount() {
-        this.props.fetchAllUsersStart();
+        this.loadUsers();
     }
-    componentDidUpdate(prevProps, prevState, snapshot) {
+
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps.userRedux !== this.props.userRedux) {
-            this.setState({ usersRedux: this.props.userRedux });
+            this.setState({ 
+                usersRedux: Array.isArray(this.props.userRedux) ? this.props.userRedux : [],
+                isLoading: false,
+                error: null
+            });
         }
         if (prevProps.genders !== this.props.genders) {
             this.setState({ genders: this.props.genders });
@@ -40,8 +48,23 @@ class UserListShow extends Component {
         if (prevProps.roles !== this.props.roles) {
             this.setState({ roles: this.props.roles });
         }
-
     }
+
+    loadUsers = async () => {
+        try {
+            this.setState({ isLoading: true, error: null });
+            await this.props.fetchAllUsersStart();
+        } catch (error) {
+            this.setState({ 
+                isLoading: false,
+                error: this.props.intl.formatMessage({ id: "system.user-manage.load-error" })
+            });
+            ToastUtil.error(
+                this.props.intl.formatMessage({ id: "common.error" }),
+                this.props.intl.formatMessage({ id: "system.user-manage.load-error" })
+            );
+        }
+    };
 
     handleDelete = async (id) => {
         const { intl } = this.props;
@@ -67,9 +90,7 @@ class UserListShow extends Component {
                         intl.formatMessage({ id: "common.success" }),
                         intl.formatMessage({ id: "system.user-manage.del-user-success" })
                     );
-                    setTimeout(() => {
-                        this.props.fetchAllUsersStart();
-                    }, 500);
+                    await this.loadUsers();
                 } catch (error) {
                     ToastUtil.error(
                         intl.formatMessage({ id: "common.error" }),
@@ -145,15 +166,173 @@ class UserListShow extends Component {
         }
     }
 
+    renderUserImage = (item) => {
+        if (item.image && item.image.data) {
+            return (
+                <img
+                    src={`${Buffer.from(item.image.data, 'base64').toString('binary')}`}
+                    alt={`${item.firstName} ${item.lastName}`}
+                    className="img-fluid rounded-circle"
+                    style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                />
+            );
+        }
+        return (
+            <div className="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                style={{ width: "40px", height: "40px" }}>
+                <FaUser className="text-secondary" />
+            </div>
+        );
+    };
+
+    renderTableContent = () => {
+        const { isLoading, error, usersRedux } = this.state;
+
+        if (isLoading) {
+            return (
+                <tr>
+                    <td colSpan="10" className="text-center py-5">
+                        <Spinner animation="border" variant="primary" />
+                    </td>
+                </tr>
+            );
+        }
+
+        if (error) {
+            return (
+                <tr>
+                    <td colSpan="10" className="text-center py-5">
+                        <Alert variant="danger" className="d-flex align-items-center justify-content-center gap-2">
+                            <FaExclamationTriangle />
+                            {error}
+                        </Alert>
+                    </td>
+                </tr>
+            );
+        }
+
+        if (!Array.isArray(usersRedux) || usersRedux.length === 0) {
+            return (
+                <tr>
+                    <td colSpan="10" className="text-center py-5">
+                        <Alert variant="info" className="d-flex align-items-center justify-content-center gap-2">
+                            <FaUser />
+                            <FormattedMessage id="system.user-manage.no-users" />
+                        </Alert>
+                    </td>
+                </tr>
+            );
+        }
+
+        return usersRedux
+            .sort((a, b) => {
+                if (!a.createdAt || !b.createdAt) return 0;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            })
+            .map((item, index) => (
+                <tr key={item.id} className="border-bottom">
+                    <td className="py-3 px-4 border-end">{index + 1}</td>
+                    <td className="py-3 px-4 border-end">{this.renderUserImage(item)}</td>
+                    <td className="py-3 px-4 border-end fw-medium">{item.firstName} {item.lastName}</td>
+                    <td className="py-3 px-4 border-end">{item.email}</td>
+                    <td className="py-3 px-4 border-end">{item.phoneNumber || '-'}</td>
+                    <td className="py-3 px-4 border-end">{item.address || '-'}</td>
+                    <td className="py-3 px-4 border-end">
+                        <Badge
+                            bg={this.getGenderColor(item.gender)}
+                            className="d-flex align-items-center justify-content-center gap-1"
+                        >
+                            {this.getGenderIcon(item.gender)}
+                            {this.props.genders.find(gender =>
+                                gender && gender.key && item.gender !== null &&
+                                parseInt(gender.key) === parseInt(item.gender)) ?
+                                (this.props.language === LANGUAGES.VI ?
+                                    this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_Vi :
+                                    this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_En)
+                                : '-'}
+                        </Badge>
+                    </td>
+                    <td className="py-3 px-4 border-end">
+                        <Badge
+                            bg={this.getRoleColor(item.roleID)}
+                            className="d-flex align-items-center justify-content-center gap-1"
+                        >
+                            {this.getRoleIcon(item.roleID)}
+                            {this.props.roles.find(role => role.key === item.roleID) ?
+                                (this.props.language === LANGUAGES.VI ?
+                                    this.props.roles.find(role => role.key === item.roleID).value_Vi :
+                                    this.props.roles.find(role => role.key === item.roleID).value_En)
+                                : '-'}
+                        </Badge>
+                    </td>
+                    <td className="py-3 px-4 border-end">
+                        <Badge
+                            bg={this.getPositionColor(item.positionID)}
+                            className="d-flex align-items-center justify-content-center gap-1"
+                        >
+                            {this.getPositionIcon(item.positionID)}
+                            {this.props.positions.find(position => position.key === item.positionID) ?
+                                (this.props.language === LANGUAGES.VI ?
+                                    this.props.positions.find(position => position.key === item.positionID).value_Vi :
+                                    this.props.positions.find(position => position.key === item.positionID).value_En)
+                                : '-'}
+                        </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                        <div className="d-flex justify-content-center gap-2">
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                className="d-flex align-items-center gap-1"
+                                onClick={() => this.handleEdit(item)}
+                            >
+                                <FaEdit />
+                                <FormattedMessage id="system.user-manage.edit" />
+                            </Button>
+                            <Button
+                                variant="outline-danger"
+                                size="sm"
+                                className="d-flex align-items-center gap-1"
+                                onClick={() => this.handleDelete(item.id)}
+                                disabled={this.state.isDeleting}
+                            >
+                                {this.state.isDeleting ? (
+                                    <Spinner animation="border" size="sm" className="me-1" />
+                                ) : (
+                                    <FaTrash />
+                                )}
+                                <FormattedMessage id="system.user-manage.delete" />
+                            </Button>
+                        </div>
+                    </td>
+                </tr>
+            ));
+    };
+
     render() {
         return (
-            <Container className="mt-4 ">
+            <Container className="mt-4">
                 <ConfirmModal />
                 <Card className="shadow-sm border-0 rounded-4">
                     <Card.Header className="bg-white border-0 py-4">
-                        <h4 className="mb-0 fw-bold text-primary text-center">
-                            <FormattedMessage id="menu.system.user-manage.header" />
-                        </h4>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <h4 className="mb-0 fw-bold text-primary">
+                                <FormattedMessage id="menu.system.user-manage.header" />
+                            </h4>
+                            <Button
+                                variant="primary"
+                                onClick={this.loadUsers}
+                                disabled={this.state.isLoading}
+                                className="d-flex align-items-center gap-1"
+                            >
+                                {this.state.isLoading ? (
+                                    <Spinner animation="border" size="sm" className="me-1" />
+                                ) : (
+                                    <FaUser className="me-1" />
+                                )}
+                                <FormattedMessage id="common.refresh" />
+                            </Button>
+                        </div>
                     </Card.Header>
                     <Card.Body className="p-0">
                         <div className="table-responsive">
@@ -173,100 +352,7 @@ class UserListShow extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {[...this.props.userRedux]
-                                        .sort((a, b) => {
-                                            if (!a.createdAt || !b.createdAt) return 0;
-                                            return new Date(b.createdAt) - new Date(a.createdAt);
-                                        })
-                                        .map((item, index) => (
-                                            <tr key={index} className="border-bottom">
-                                                <td className="py-3 px-4 border-end">{index + 1}</td>
-                                                <td className="py-3 px-4 border-end">
-                                                    {item.image && item.image.data ? (
-                                                        <img
-                                                            src={`${Buffer.from(item.image.data, 'base64').toString('binary')}`}
-                                                            alt="User"
-                                                            className="img-fluid rounded-circle"
-                                                            style={{ width: "40px", height: "40px" }}
-                                                        />
-                                                    ) : (
-                                                        <span>No Image</span> // Hiển thị nếu không có ảnh
-                                                    )}
-                                                </td>
-                                                <td className="py-3 px-4 border-end fw-medium">{item.firstName} {item.lastName}</td>
-                                                <td className="py-3 px-4 border-end">{item.email}</td>
-                                                <td className="py-3 px-4 border-end">{item.phoneNumber}</td>
-                                                <td className="py-3 px-4 border-end">{item.address}</td>
-                                                <td className="py-3 px-4 border-end">
-                                                    <Badge
-                                                        bg={this.getGenderColor(item.gender)}
-                                                        className="d-flex align-items-center justify-content-center gap-1"
-                                                    >
-                                                        {this.getGenderIcon(item.gender)}
-                                                        {this.props.genders.find(gender =>
-                                                            gender && gender.key && item.gender !== null &&
-                                                            parseInt(gender.key) === parseInt(item.gender)) ?
-                                                            (this.props.language === LANGUAGES.VI ?
-                                                                this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_Vi :
-                                                                this.props.genders.find(gender => parseInt(gender.key) === parseInt(item.gender)).value_En)
-                                                            : ''}
-                                                    </Badge>
-                                                </td>
-                                                <td className="py-3 px-4 border-end">
-                                                    <Badge
-                                                        bg={this.getRoleColor(item.roleID)}
-                                                        className="d-flex align-items-center justify-content-center gap-1"
-                                                    >
-                                                        {this.getRoleIcon(item.roleID)}
-                                                        {this.props.roles.find(role => role.key === item.roleID) ?
-                                                            (this.props.language === LANGUAGES.VI ?
-                                                                this.props.roles.find(role => role.key === item.roleID).value_Vi :
-                                                                this.props.roles.find(role => role.key === item.roleID).value_En)
-                                                            : ''}
-                                                    </Badge>
-                                                </td>
-                                                <td className="py-3 px-4 border-end">
-                                                    <Badge
-                                                        bg={this.getPositionColor(item.positionID)}
-                                                        className="d-flex align-items-center justify-content-center gap-1"
-                                                    >
-                                                        {this.getPositionIcon(item.positionID)}
-                                                        {this.props.positions.find(position => position.key === item.positionID) ?
-                                                            (this.props.language === LANGUAGES.VI ?
-                                                                this.props.positions.find(position => position.key === item.positionID).value_Vi :
-                                                                this.props.positions.find(position => position.key === item.positionID).value_En)
-                                                            : ''}
-                                                    </Badge>
-                                                </td>
-                                                <td className="py-3 px-4">
-                                                    <div className="d-flex justify-content-center gap-2">
-                                                        <Button
-                                                            variant="outline-primary"
-                                                            size="sm"
-                                                            className="d-flex align-items-center gap-1"
-                                                            onClick={() => this.handleEdit(item)}
-                                                        >
-                                                            <FaEdit />
-                                                            <FormattedMessage id="system.user-manage.edit" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline-danger"
-                                                            size="sm"
-                                                            className="d-flex align-items-center gap-1"
-                                                            onClick={() => this.handleDelete(item.id)}
-                                                            disabled={this.state.isDeleting}
-                                                        >
-                                                            {this.state.isDeleting ? (
-                                                                <span className="spinner-border spinner-border-sm me-1" />
-                                                            ) : (
-                                                                <FaTrash />
-                                                            )}
-                                                            <FormattedMessage id="system.user-manage.delete" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                    {this.renderTableContent()}
                                 </tbody>
                             </Table>
                         </div>
@@ -276,11 +362,14 @@ class UserListShow extends Component {
         );
     }
 }
+
 const mapStateToProps = (state) => {
     return {
-        userRedux: state.admin.users
+        userRedux: state.admin.users,
+        language: state.app.language
     }
 }
+
 const mapDispatchToProps = (dispatch) => {
     return {
         fetchAllUsersStart: () => dispatch(fetchAllUsersStart()),

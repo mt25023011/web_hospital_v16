@@ -1,79 +1,141 @@
 import express from 'express';
 import userService from '../services/userService';
 
+// Common response format
+const sendResponse = (res, status, data, message = '') => {
+    return res.status(status).json({
+        success: status < 400,
+        message,
+        data
+    });
+};
+
 let getlistUser = async (req, res) => {
     try {
-        let data = await userService.getlistUser();
+        const data = await userService.getlistUser();
         if (data) {
-            return res.status(200).json(data);
-        } else {
-            return res.status(404).json({ error: "not found" });
+            return sendResponse(res, 200, data, 'Users retrieved successfully');
         }
+        return sendResponse(res, 404, null, 'No users found');
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('Error in getlistUser:', error);
+        return sendResponse(res, 500, null, 'Internal server error');
     }
 }
 
 let getUserById = async (req, res) => {
     try {
-        let data = await userService.getUserbyID(req.query.id);
-        if (data) {
-            return res.status(200).json(data);
-        } else {
-            return res.status(404).json({ error: "user not found" });
+        const { id } = req.query;
+        if (!id) {
+            return sendResponse(res, 400, null, 'User ID is required');
         }
+
+        const data = await userService.getUserbyID(id);
+        return sendResponse(res, 200, data, 'User retrieved successfully');
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('Error in getUserById:', error);
+        
+        if (error.name === 'UserNotFoundError') {
+            return sendResponse(res, 404, null, error.message);
+        }
+        
+        return sendResponse(res, 500, null, 'Internal server error');
     }
 }
 
 let createNewUser = async (req, res) => {
     try {
-        let data = await userService.createNewUser(req.body);
-        return res.status(201).json(data);
+        const userData = req.body;
+        
+        // Basic validation
+        if (!userData.email || !userData.password) {
+            return sendResponse(res, 400, null, 'Email and password are required');
+        }
+
+        const data = await userService.createNewUser(userData);
+        return sendResponse(res, 201, data, 'User created successfully');
     } catch (error) {
-        console.error('Error in createNewUser controller:', error);
-        return res.status(500).json({ error: error.message });
+        console.error('Error in createNewUser:', error);
+        
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            return sendResponse(res, 400, null, error.message);
+        }
+        
+        return sendResponse(res, 500, null, 'Internal server error');
     }
 }
 
 let deleteUser = async (req, res) => {
     try {
-        let data = await userService.deleteUser(req.query.id);
-        
-        return res.status(200).json(data);
+        const { id } = req.query;
+        if (!id) {
+            return sendResponse(res, 400, null, 'User ID is required');
+        }
+
+        const data = await userService.deleteUser(id);
+        return sendResponse(res, 200, data, 'User deleted successfully');
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('Error in deleteUser:', error);
+        
+        if (error.name === 'UserNotFoundError') {
+            return sendResponse(res, 404, null, error.message);
+        }
+        
+        return sendResponse(res, 500, null, 'Internal server error');
     }
 }
 
 let updateUser = async (req, res) => {
     try {
-        const id = req.query.id;
-        console.log('Update request - ID:', id);
-        console.log('Update request - Body:', req.body);
-        
+        const { id } = req.query;
+        const updateData = req.body;
+
         if (!id) {
-            return res.status(400).json({ error: "User ID is required" });
+            return sendResponse(res, 400, null, 'User ID is required');
         }
 
-        if (Object.keys(req.body).length === 0) {
-            return res.status(400).json({ error: "Update data is required" });
+        if (Object.keys(updateData).length === 0) {
+            return sendResponse(res, 400, null, 'Update data is required');
         }
-        let data = await userService.updateUser(id, req.body);
-        return res.status(200).json(data);
+
+        const data = await userService.updateUser(id, updateData);
+        return sendResponse(res, 200, data, 'User updated successfully');
     } catch (error) {
         console.error('Error in updateUser:', error);
-        return res.status(500).json({ error: error.message });
+        
+        if (error.name === 'UserNotFoundError') {
+            return sendResponse(res, 404, null, error.message);
+        }
+        
+        if (error.name === 'ValidationError') {
+            return sendResponse(res, 400, null, error.message);
+        }
+        
+        return sendResponse(res, 500, null, 'Internal server error');
     }
 }
 
+let getUserRole = async (req, res) => {
+    try {
+        const { type } = req.query;
+        if (!type) {
+            return sendResponse(res, 400, null, 'Role type is required');
+        }
 
+        const data = await userService.getUserRole(type);
+        return sendResponse(res, 200, data, 'User roles retrieved successfully');
+    } catch (error) {
+        console.error('Error in getUserRole:', error);
+        return sendResponse(res, 500, null, 'Internal server error');
+    }
+}
 
 export default {
-    getlistUser: getlistUser,
-    getUserById: getUserById,
-    createNewUser: createNewUser,
-    deleteUser: deleteUser,
-    updateUser: updateUser,
+    getlistUser,
+    getUserById,
+    createNewUser,
+    deleteUser,
+    updateUser,
+    getUserRole,
 }

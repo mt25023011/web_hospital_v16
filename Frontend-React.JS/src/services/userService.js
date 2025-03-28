@@ -29,9 +29,15 @@ const userService = {
             }
         })
             .then((res) => {
+                if (res.data.status === 400) {
+                    return {
+                        status: 400,
+                        message: res.data.message
+                    };
+                }
                 return {
                     status: 201,
-                    data: res.data
+                    data: res
                 };
             })
             .catch((error) => {

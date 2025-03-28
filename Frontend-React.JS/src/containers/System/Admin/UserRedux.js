@@ -137,6 +137,8 @@ class UserRedux extends Component {
 
         const successMessage = this.props.intl.formatMessage({ id: "common.success" });
         const userCreationSuccessMessage = this.props.intl.formatMessage({ id: "system.user-manage.add-user-success" });
+        const userCreationFailMessage = this.props.intl.formatMessage({ id: "system.user-manage.add-user-fail" });
+        const errorMessage = this.props.intl.formatMessage({ id: "common.error" });
 
         try {
             let formData = { ...this.state.formData };
@@ -155,11 +157,16 @@ class UserRedux extends Component {
                 address: formData.address,
                 image: formData.imageBase64,
             }
-            await this.props.createUser(data);
-            await this.props.fetchAllUsersStart();
-
-            ToastUtil.success(successMessage, userCreationSuccessMessage);
-            this.handleReset();
+            let res = await this.props.createUser(data);
+            console.log("res", res);
+            if (res && res.status === 201) {
+                await this.props.fetchAllUsersStart();
+                ToastUtil.success(successMessage, userCreationSuccessMessage);
+                this.handleReset();
+            }
+            else {
+                ToastUtil.error(errorMessage, res?.message || userCreationFailMessage);
+            }
 
         } catch (error) {
             console.error('Error submitting form:', error);

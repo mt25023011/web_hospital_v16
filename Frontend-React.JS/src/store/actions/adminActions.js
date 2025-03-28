@@ -25,24 +25,37 @@ export const createUser = (data) => {
             let res = await userService.createUser(data);
             if (res && res.status === 201) {
                 dispatch(createUserSuccess(res.data));
+                return {
+                    status: 201,
+                    message: "Create user successfully",
+                    data: res.data
+                };
             } else {
-                dispatch(createUserFail(res.data));
+                dispatch(createUserFail(res.message));
+                return {
+                    status: 400,
+                    message: res.message
+                };
             }
         } catch (error) {
             console.log("error", error);
             dispatch(createUserFail(error));
+            return { status: 400, message: error };
         }
     }
 }
 
 export const createUserSuccess = (data) => ({
     type: actionTypes.CREATE_USER_SUCCESS,
+    status: 201,
+    message: "Create user successfully",
     data: data
 })
 
 export const createUserFail = (error) => ({
     type: actionTypes.CREATE_USER_FAIL,
-    error: error
+    status: 400,
+    message: error
 })
 
 //fetch gender
@@ -138,8 +151,9 @@ export const fetchAllUsersStart = () => {
                 isLoading: false,
                 message: "Fetch all users successfully"
             }
+            console.log("users", users);
             if (users && users.data) {
-                dispatch(fetchAllUsersSuccess(users.data));
+                dispatch(fetchAllUsersSuccess(users.data.data));
             } else {
                 dispatch(fetchAllUsersFail(users.data));
             }

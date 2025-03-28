@@ -3,9 +3,51 @@ import bcrypt, { compareSync } from 'bcrypt';
 import fs from 'fs';
 import path from 'path';
 import { Buffer } from 'buffer';
-let getlistUser = async () => {
+
+// Custom error classes
+class UserNotFoundError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'UserNotFoundError';
+    }
+}
+
+class ValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'ValidationError';
+    }
+}
+
+// Validation helpers
+const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
+const validatePassword = (password) => {
+    return password && password.length >= 6;
+};
+
+const formatRoleID = (roleID) => {
+    const validRoles = ['0', '1', '2'];
+    if (!validRoles.includes(roleID)) {
+        throw new ValidationError('Invalid role ID');
+    }
+    return `R${roleID}`;
+};
+
+const formatPositionID = (positionID) => {
+    const validPositions = ['0', '1', '2', '3', '4'];
+    if (!validPositions.includes(positionID)) {
+        throw new ValidationError('Invalid position ID');
+    }
+    return `P${positionID}`;
+};
+
+const getlistUser = async () => {
     try {
-        let data = await db.User.findAll({
+        const data = await db.User.findAll({
             raw: true,
             attributes: {
                 exclude: ['password']
@@ -13,97 +55,132 @@ let getlistUser = async () => {
         });
         return data;
     } catch (error) {
-        console.log(error);
+        console.error('Error in getlistUser:', error);
         throw error;
     }
-}
+};
 
-let getUserbyID = async (id) => {
+const getUserbyID = async (id) => {
     try {
-        let data = await db.User.findOne({ where: { id: id } });
+        const data = await db.User.findOne({ where: { id } });
+        if (!data) {
+            throw new UserNotFoundError('User not found');
+        }
         return data;
     } catch (error) {
-        console.log(error);
+        console.error('Error in getUserbyID:', error);
         throw error;
     }
-}
+};
 
-let createNewUser = async (data) => {
+const checkEmailExists = async (email) => {
     try {
-        if (data.password) {
-            const salt = bcrypt.genSaltSync(10);
-            data.password = bcrypt.hashSync(data.password, salt);
+        const user = await db.User.findOne({ where: { email } });
+        return !!user;
+    } catch (error) {
+        console.error('Error in checkEmailExists:', error);
+        throw error;
+    }
+};
+
+const createNewUser = async (data) => {
+    try {
+        // Validate required fields
+        if (!data.email || !validateEmail(data.email)) {
+            throw new ValidationError('Invalid email format');
         }
+        if (!validatePassword(data.password)) {
+            throw new ValidationError('Password must be at least 6 characters');
+        }
+
+        // Check if email already exists
+        const emailExists = await checkEmailExists(data.email);
+        if (emailExists) {
+            return {
+                status: 400,
+                message: 'Email already exists'
+            };
+        }
+
+        // Hash password
+        const salt = bcrypt.genSaltSync(10);
+        data.password = bcrypt.hashSync(data.password, salt);
+
+        // Format role and position
         if (data.roleID) {
-            data.roleID = `R${data.roleID === '1' ? '1' : data.roleID === '0' ? '0' : '2'}`;
+            data.roleID = formatRoleID(data.roleID);
         }
         if (data.positionID) {
-            data.positionID = `P${data.positionID === '0' ? '0' : data.positionID === '1' ? '1' : data.positionID === '2' ? '2' : data.positionID === '3' ? '3' : '4'}`;
+            data.positionID = formatPositionID(data.positionID);
         }
-        // Handle image upload
-        if (!data.image) {
-            data.image = "";
-        }
-        console.log("data", data);
-        // Create new user in database
-        const newUser = await db.User.create(data);
 
-        // Return created user without password
+        // Handle image
+        data.image = data.image || "";
+
+        // Create user
+        const newUser = await db.User.create(data);
         const { password, ...userWithoutPassword } = newUser.toJSON();
         return userWithoutPassword;
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error in createNewUser:', error);
         throw error;
     }
-}
+};
 
-let deleteUser = async (id) => {
+const deleteUser = async (id) => {
     try {
-        let data = await db.User.findOne({ where: { id: id } });
-        if (!data) {
-            throw new Error('User not found');
+        const user = await db.User.findOne({ where: { id } });
+        if (!user) {
+            throw new UserNotFoundError('User not found');
         }
-        await db.User.destroy({ where: { id: id } });
+        
+        await db.User.destroy({ where: { id } });
         return {
             status: 200,
             message: "Delete user successfully"
         };
     } catch (error) {
-        console.log(error);
+        console.error('Error in deleteUser:', error);
         throw error;
     }
-}
+};
 
-let updateUser = async (id, data) => {
-    console.log('data in service:', id, data);
+const updateUser = async (id, data) => {
     try {
-        let user = await db.User.findOne({ where: { id: id } });
+        const user = await db.User.findOne({ where: { id } });
         if (!user) {
-            throw new Error('User not found');
+            throw new UserNotFoundError('User not found');
+        }
+
+        // Validate email if provided
+        if (data.email && !validateEmail(data.email)) {
+            throw new ValidationError('Invalid email format');
         }
 
         // Handle password update
         if (data.password) {
-            let salt = bcrypt.genSaltSync(10);
+            if (!validatePassword(data.password)) {
+                throw new ValidationError('Password must be at least 6 characters');
+            }
+            const salt = bcrypt.genSaltSync(10);
             data.password = bcrypt.hashSync(data.password, salt);
         }
 
-        // Handle role update
+        // Handle role and position
         if (data.roleID) {
-            data.roleID = `R${data.roleID === '1' ? '1' : data.roleID === '0' ? '0' : '2'}`;
+            data.roleID = formatRoleID(data.roleID);
         }
+        
         if (data.roleID !== 'R1') {
             data.positionID = null;
-        } else {
-            if (data.positionID) {
-                data.positionID = `P${data.positionID === '0' ? '0' : data.positionID === '1' ? '1' : data.positionID === '2' ? '2' : data.positionID === '3' ? '3' : '4'}`;
-            }
+        } else if (data.positionID) {
+            data.positionID = formatPositionID(data.positionID);
         }
 
-        await db.User.update(data, { where: { id: id } });
+        await db.User.update(data, { where: { id } });
 
-        // Get updated user data
-        const updatedUser = await db.User.findOne({ where: { id: id } });
+        // Get updated user
+        const updatedUser = await db.User.findOne({ where: { id } });
         const { password, ...userWithoutPassword } = updatedUser.toJSON();
 
         return {
@@ -112,16 +189,36 @@ let updateUser = async (id, data) => {
             data: userWithoutPassword
         };
     } catch (error) {
-        console.error('Error updating user:', error);
+        console.error('Error in updateUser:', error);
         throw error;
     }
-}
+};
 
+const getUserRole = async (type) => {
+    try {
+        const data = await db.User.findAll({
+            where: { roleID: type },
+            raw: true,
+            attributes: {
+                exclude: ['password']
+            }
+        });
+        return {
+            status: 200,
+            message: "Get user role successfully",
+            data
+        };
+    } catch (error) {
+        console.error('Error in getUserRole:', error);
+        throw error;
+    }
+};
 
 export default {
-    getlistUser: getlistUser,
-    getUserbyID: getUserbyID,
-    createNewUser: createNewUser,
-    deleteUser: deleteUser,
-    updateUser: updateUser,
-}
+    getlistUser,
+    getUserbyID,
+    createNewUser,
+    deleteUser,
+    updateUser,
+    getUserRole,
+};

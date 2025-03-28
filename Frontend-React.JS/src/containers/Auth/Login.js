@@ -88,6 +88,11 @@ class Login extends Component {
                                 {/* login button */}
                                 <button type="submit" className="btn-submit"
                                     onClick={() => this.handleLogin()}
+                                    onKeyDown={(event) => {
+                                        if(event.key === 'Enter'){
+                                            this.handleLogin();
+                                        }
+                                    }}
                                 >Login</button>
 
                                 {/* forgot password */}
