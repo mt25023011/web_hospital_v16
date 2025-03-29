@@ -194,14 +194,34 @@ const updateUser = async (id, data) => {
     }
 };
 
-const getUserRole = async (type) => {
+const getUserRole = async (type, limit) => {
     try {
+        limit = parseInt(limit) || 10;
         const data = await db.User.findAll({
             where: { roleID: type },
             raw: true,
             attributes: {
                 exclude: ['password']
-            }
+            },
+            include: [{
+                model: db.Allcodes,
+                as: 'roleData',
+                attributes: ['value_En', 'value_Vi']
+            },
+            {
+                model: db.Allcodes,
+                as: 'positionData',
+                attributes: ['value_En', 'value_Vi']
+            },
+            {
+                model: db.Allcodes,
+                as: 'genderData',
+                attributes: ['value_En', 'value_Vi']
+            }],
+            order: [['createdAt', 'DESC']],
+            limit: limit,
+            group: ['User.id'],
+            distinct: true
         });
         return {
             status: 200,
@@ -210,7 +230,12 @@ const getUserRole = async (type) => {
         };
     } catch (error) {
         console.error('Error in getUserRole:', error);
-        throw error;
+        return {
+            status: 500,
+            message: "Internal server error1",
+            data: null
+
+        };
     }
 };
 

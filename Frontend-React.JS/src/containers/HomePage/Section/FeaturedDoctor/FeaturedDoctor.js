@@ -9,9 +9,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import images from '../../../../assets/FeaturedDoctor';
 import banner from '../../../../assets/images/140311-background5.png';
+import { fetchUserRole } from '../../../../store/actions/userActions';
 
 class FeaturedDoctor extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            userRole: null
+        }
+    }
 
+    componentDidMount() {
+        this.props.fetchUserRole
+    }
 
     render() {
         const CustomArrow = ({ direction, onClick }) => (
@@ -47,7 +57,7 @@ class FeaturedDoctor extends Component {
             <div className='FeaturedDoctor-container'>
                 <div className='FeaturedDoctor-header'>
                     <div className='FeaturedDoctor-header-title'>
-                        <span>Cơ sở y tế</span>
+                        <span>Bác sĩ nổi bật</span>
                     </div>
                     <div className='FeaturedDoctor-header-view-more'>
                         <button className='FeaturedDoctor-header-view-more-button'>Xem thêm</button>
@@ -71,11 +81,13 @@ class FeaturedDoctor extends Component {
 
 const mapStateToProps = state => {
     return {
+        userRole: state.user.userRole
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        fetchUserRole: () => dispatch(fetchUserRole())
     };
 };
 

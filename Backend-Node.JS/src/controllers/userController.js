@@ -118,16 +118,27 @@ let updateUser = async (req, res) => {
 
 let getUserRole = async (req, res) => {
     try {
-        const { type } = req.query;
+        let type  = req.query.type;
+        let  limit= req.query.limit;
+        let errCode = 1;
         if (!type) {
-            return sendResponse(res, 400, null, 'Role type is required');
+            errCode = 1;
+            return sendResponse(res, 400, {
+                errCode,
+                message: 'Missing parameters',
+                data: null
+            }, 'Missing parameters');
         }
 
-        const data = await userService.getUserRole(type);
+        const data = await userService.getUserRole(type, limit);
         return sendResponse(res, 200, data, 'User roles retrieved successfully');
     } catch (error) {
         console.error('Error in getUserRole:', error);
-        return sendResponse(res, 500, null, 'Internal server error');
+        return sendResponse(res, 500, {
+            errCode: 1,
+            message: 'Internal server error',
+            data: null
+        }, 'Internal server error');
     }
 }
 

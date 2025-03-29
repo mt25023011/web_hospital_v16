@@ -97,6 +97,10 @@ const userService = {
             });
     },
 
+    getUserRole(type, limit) {
+        return axios.get(`/api/user/getrole?type=${type}&limit=${limit}`);
+    }
+
 };
 
 export default userService;

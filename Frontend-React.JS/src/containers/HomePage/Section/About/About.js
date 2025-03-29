@@ -13,7 +13,7 @@ class About extends Component {
                         <span>Về chúng tôi Video</span>
                     </div>
                 </div>
-                <div className='About-content'>
+                {/* <div className='About-content'>
                     <div className='About-content-left'>
                         <div className='About-content-left-title'>
                             <span>Giới thiệu</span>
@@ -32,7 +32,7 @@ class About extends Component {
                             asperiores quis placeat, eaque quasi. Incidunt voluptatibus voluptate iste minus dolore iusto similique
                             perspiciatis optio illo necessitatibus. Debitis rerum voluptas dolore magnam, saepe ea velit quaerat</p>
                     </div>
-                </div>
+                </div> */}
             </div>
         );
     }
