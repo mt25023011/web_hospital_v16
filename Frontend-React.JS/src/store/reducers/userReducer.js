@@ -25,6 +25,23 @@ const appReducer = (state = initialState, action) => {
                 isLoggedIn: false,
                 userInfo: null
             }
+        case actionTypes.FETCH_DOCTOR_LIST_START:
+            return {
+                ...state,
+                isLoadingDoctorList: true
+            }
+        case actionTypes.FETCH_DOCTOR_LIST_SUCCESS:
+            return {
+                ...state,
+                isLoadingDoctorList: false,
+                doctorList: action.data
+            }
+        case actionTypes.FETCH_DOCTOR_LIST_FAIL:
+            return {
+                ...state,
+                isLoadingDoctorList: false,
+                doctorList: []
+            }
         default:
             return state;
     }

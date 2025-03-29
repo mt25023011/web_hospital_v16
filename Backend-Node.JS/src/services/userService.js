@@ -203,26 +203,25 @@ const getUserRole = async (type, limit) => {
             attributes: {
                 exclude: ['password']
             },
-            include: [{
-                model: db.Allcodes,
-                as: 'roleData',
-                attributes: ['value_En', 'value_Vi']
-            },
-            {
-                model: db.Allcodes,
-                as: 'positionData',
-                attributes: ['value_En', 'value_Vi']
-            },
-            {
-                model: db.Allcodes,
-                as: 'genderData',
-                attributes: ['value_En', 'value_Vi']
-            }],
+            include: [
+                {
+                    model: db.Allcodes,
+                    as: 'positionData',
+                    attributes: ['value_En', 'value_Vi'],
+                },
+                {
+                    model: db.Allcodes,
+                    as: 'genderData',
+                    attributes: ['value_En', 'value_Vi'],
+                }
+            ],
+            nest: true,
             order: [['createdAt', 'DESC']],
             limit: limit,
             group: ['User.id'],
             distinct: true
         });
+        console.log(data);
         return {
             status: 200,
             message: "Get user role successfully",

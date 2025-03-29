@@ -12,7 +12,7 @@ const initialState = {
     isLoadingDeleteUser: false,
     deleteUser: null,
     isLoadingUpdateUser: false,
-    updateUser: []
+    updateUser: [],
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -133,14 +133,11 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 isLoadingUpdateUser: false,
                 updateUser: null
-            }
-        case actionTypes.FETCH_UPDATE_USER_START:
-            return {
-                ...state,
-                isLoadingUpdateUser: true
-            }
+            }        
+
         default:
             return state;
+
     }
 }
 

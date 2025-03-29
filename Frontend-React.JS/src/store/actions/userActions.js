@@ -14,42 +14,31 @@ export const processLogout = () => ({
     type: actionTypes.PROCESS_LOGOUT
 })
 
-//user role get
-export const fetchUserRoleSuccess = (data) => ({
-    type: actionTypes.FETCH_USER_ROLE_SUCCESS,
-    data: data
-})
-export const fetchUserRoleFail = (error) => ({
-    type: actionTypes.FETCH_USER_ROLE_FAIL,
-    error: error
-})
-export const fetchUserRoleStart = () => ({
-    type: actionTypes.FETCH_USER_ROLE_START,
-    isLoading: true
-})
-
-export const fetchUserRole = () => {
+export const fetchDoctorList = () => {
     return async (dispatch, getState) => {
-        dispatch(fetchUserRoleStart());
         try {
+            dispatch(fetchDoctorListStart());
             let res = await userService.getUserRole("R1", 10);
-            console.log("res", res);
-            let userwithRole = {
-                data: res.data.data,
-                isLoading: false,
-                message: "Fetch user role successfully",
-                status: res.data.status
-            };
-            console.log("userwithRole", userwithRole);
-            if (res.status === 200) {
-                dispatch(fetchUserRoleSuccess(userwithRole));
+            if (res.data.status === 200) {
+                dispatch(fetchDoctorListSuccess(res.data.data));
             } else {
-                dispatch(fetchUserRoleFail(res));
+                dispatch(fetchDoctorListFail(res.data.message));
             }
         } catch (error) {
-            dispatch(fetchUserRoleFail(error));
+            dispatch(fetchDoctorListFail(error));
         }
     }
 }
 
-
+export const fetchDoctorListSuccess = (data) => ({
+    type: actionTypes.FETCH_DOCTOR_LIST_SUCCESS,
+    data: data
+})
+export const fetchDoctorListFail = (error) => ({
+    type: actionTypes.FETCH_DOCTOR_LIST_FAIL,
+    error: error
+})
+export const fetchDoctorListStart = () => ({
+    type: actionTypes.FETCH_DOCTOR_LIST_START,
+    isLoading: true
+})
