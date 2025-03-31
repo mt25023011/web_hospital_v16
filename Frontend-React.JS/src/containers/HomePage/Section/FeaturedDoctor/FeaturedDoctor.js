@@ -11,14 +11,13 @@ import { fetchDoctorList } from '../../../../store/actions/userActions';
 import { FormattedMessage } from "react-intl";
 import { injectIntl } from "react-intl";
 
-// Constants
+// Constants for the slider settings
 const SLIDER_SETTINGS = {
     dots: true,
     speed: 500,
     slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
     pauseOnHover: true,
+    infinite: false,
     responsive: [
         {
             breakpoint: 1200,
@@ -46,12 +45,12 @@ const transformImage = (imageBase64) => {
     }
 };
 
-// Memoized CustomArrow component
-const CustomArrow = React.memo(({ direction, onClick }) => (
+// Memoized CustomArrow component for the navigation arrows
+const CustomArrow = React.memo(({ direction, onClick, disabled }) => (
     <div
-        className={`custom-arrow ${direction}`}
-        onClick={onClick}
-        onKeyPress={(e) => e.key === 'Enter' && onClick()}
+        className={`custom-arrow ${direction} ${disabled ? 'disabled' : ''}`}
+        onClick={!disabled ? onClick : null}
+        onKeyPress={(e) => e.key === 'Enter' && !disabled && onClick()}
         role="button"
         tabIndex={0}
         aria-label={direction === 'next' ? 'Next slide' : 'Previous slide'}
@@ -62,10 +61,11 @@ const CustomArrow = React.memo(({ direction, onClick }) => (
 
 CustomArrow.propTypes = {
     direction: PropTypes.oneOf(['next', 'prev']).isRequired,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    disabled: PropTypes.bool.isRequired
 };
 
-// DoctorCard component
+// DoctorCard component to display individual doctor information
 const DoctorCard = React.memo(({ doctor, language }) => {
     const position = doctor.positionData?.[language === 'vi' ? 'value_Vi' : 'value_En'] || '';
     const image = transformImage(doctor.image);
@@ -76,6 +76,7 @@ const DoctorCard = React.memo(({ doctor, language }) => {
                 src={image}
                 alt={`${doctor.lastName} ${doctor.firstName}`}
                 loading="lazy"
+                className='FeaturedDoctor-item-image'
                 onError={(e) => {
                     e.target.src = '/images/doctor-placeholder.png';
                 }}
@@ -110,7 +111,8 @@ class FeaturedDoctor extends Component {
         this.state = {
             doctorList: [],
             isLoading: true,
-            error: null
+            error: null,
+            currentIndex: 0  // To track the current slide index
         };
     }
 
@@ -143,15 +145,36 @@ class FeaturedDoctor extends Component {
         return this.props.language === 'vi' ? 'value_Vi' : 'value_En';
     }
 
+    handleSlideChange = (currentIndex) => {
+        this.setState({ currentIndex });
+    };
+
     render() {
         const { doctorList = [], language } = this.props;
+        const { currentIndex } = this.state;
         const settings = {
             ...SLIDER_SETTINGS,
             infinite: doctorList?.length > 4,
             slidesToShow: Math.min(4, doctorList?.length || 0),
             arrows: doctorList?.length > 4,
-            nextArrow: <CustomArrow direction="next" />,
-            prevArrow: <CustomArrow direction="prev" />
+            nextArrow: (
+                <CustomArrow
+                    direction="next"
+                    onClick={() => this.slider.slickNext()}
+                    disabled={currentIndex === doctorList.length - 1}
+                />
+            ),
+            prevArrow: (
+                <CustomArrow
+                    direction="prev"
+                    onClick={() => this.slider.slickPrev()}
+                    disabled={currentIndex === 0}
+                />
+            ),
+            beforeChange: (oldIndex, newIndex) => {
+                this.handleSlideChange(newIndex);
+            },
+            ref: (slider) => (this.slider = slider)
         };
 
         return (
@@ -159,6 +182,7 @@ class FeaturedDoctor extends Component {
                 <div className='FeaturedDoctor-header'>
                     <h2 className='FeaturedDoctor-header-title'>
                         <FormattedMessage id="homepage.featured-doctor" defaultMessage="Bác sĩ nổi bật" />
+                        
                     </h2>
                     <div className='FeaturedDoctor-header-view-more'>
                         <button 

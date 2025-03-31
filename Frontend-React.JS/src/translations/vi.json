@@ -23,6 +23,10 @@
         "success-delete-user": "Xóa người dùng thành công",
         "error-delete-user": "Xóa người dùng thất bại"
     },
+    "homepage": {
+        "featured-doctor": "Bác sĩ nổi bật",
+        "view-more": "Xem thêm"
+    },
     "validate": {
         "phoneNumber": "Số điện thoại phải có 10 số",
         "email": "Email không hợp lệ",

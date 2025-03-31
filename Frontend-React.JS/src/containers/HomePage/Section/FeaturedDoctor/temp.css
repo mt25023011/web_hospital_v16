@@ -1,8 +1,9 @@
 .FeaturedDoctor-container {
-    padding: 40px 0;
+    padding: 40px 20px;
     background: url('../../../../assets/images/140311-background5.png') no-repeat center center;
     background-size: cover;
     position: relative;
+    min-height: 500px;
 }
 
 .FeaturedDoctor-header {
@@ -44,26 +45,36 @@
 }
 
 .FeaturedDoctor-item {
-    padding: 10px;
+    padding: 15px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    border: 1px solid #e6f32c;
+    margin: 0 10px;
+    background-color: #e2e2e2;
 
     &:hover {
         transform: translateY(-5px);
+        
+        img {
+            border-color: #3ab3c2;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
     }
 
     img {
-        width: 240px;
-        height: 240px;
+        width: 200px;
+        height: 200px;
         border-radius: 50%;
         object-fit: cover;
-        margin-bottom: 15px;
-        border: 3px solid #45c3d2;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        margin-bottom: 20px;
+        border: 4px solid #45c3d2;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
     }
 
     span {
@@ -91,31 +102,40 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.9);
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 2;
     transition: all 0.3s ease;
+    border: 1px solid rgba(69, 195, 210, 0.2);
 
     &:hover {
         background: #45c3d2;
         color: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     &.prev {
-        left: -20px;
+        left: -22px;
     }
 
     &.next {
-        right: -20px;
+        right: -22px;
     }
 }
+.custom-arrow.disabled {
+    opacity: 0.3;
+    pointer-events: none;  /* Prevent click events */
+    display: none;
+}
+
+
 
 /* Slick dots customization */
 .slick-dots {
@@ -221,91 +241,93 @@
 
 .FeaturedDoctor-item-info {
     display: flex;
-    flex-direction: column; /* Xếp theo chiều dọc */
-    align-items: center; /* Căn giữa */
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     text-align: center;
     position: relative;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
 }
 
 .FeaturedDoctor-item-info-name {
     font-weight: 600;
     font-size: 18px;
-    color: #333;
-    margin-bottom: 10px;
+    color: #2d2d2d;
+    margin-bottom: 12px;
     position: relative;
-    padding-top: 25px; /* Thêm khoảng cách phía trên để tránh bị đè lên */
-}
-
-.FeaturedDoctor-item-info-name .position-absolute {
-    font-size: 14px;
-    color: #45c3d2; /* Màu sắc cho chức danh */
-    position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    padding: 0 10px; /* Tăng padding để tạo không gian cho text dài */
-    border-radius: 5px;
-    font-style: italic;
-    letter-spacing: 0.5px;
-    min-width: 120px; /* Đặt chiều rộng tối thiểu cho vị trí */
-    white-space: nowrap; /* Đảm bảo không có xuống dòng */
-    text-overflow: ellipsis; /* Nếu vị trí dài quá, sẽ hiển thị "..." */
-    overflow: hidden;
-}
-
-.FeaturedDoctor-item-info-name span {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
+    padding-top: 28px;
+    width: 100%;
+    
+    .position-absolute {
+        font-size: 14px;
+        color: #45c3d2;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    span {
+        display: block;
+        margin-top: 4px;
+    }
 }
 
 .FeaturedDoctor-item-info-description {
     font-size: 14px;
     color: #666;
-    margin-top: 5px;
+    margin-top: 8px;
     line-height: 1.5;
-    max-height: 50px; /* Giới hạn chiều cao mô tả */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Hiển thị "..." nếu mô tả quá dài */
-}
-
-/* Hover effect */
-.FeaturedDoctor-item-info:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    
+    span {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 /* Loading and error containers */
 .loading-container, .error-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 300px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 20px;
 }
 
 .loading-spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #45c3d2;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 15px;
 }
 
-p {
-    color: #666;
-    font-size: 16px;
-}
-
-.error-container p {
-    color: #e74c3c;
+.error-container {
+    color: #dc3545;
+    
+    p {
+        font-size: 16px;
+        margin: 0;
+    }
 }
 
 /* Animation for loading spinner */
@@ -317,43 +339,66 @@ p {
 /* Responsive styles */
 @media screen and (max-width: 1200px) {
     .FeaturedDoctor-container {
-        .FeaturedDoctor-content {
-            .FeaturedDoctor-item {
-                img {
-                    width: 200px;
-                    height: 200px;
-                }
-            }
-        }
+        padding: 30px 15px;
+    }
+
+    .FeaturedDoctor-item img {
+        width: 180px;
+        height: 180px;
+    }
+
+    .custom-arrow {
+        width: 40px;
+        height: 40px;
+        
+        &.prev { left: -20px; }
+        &.next { right: -20px; }
     }
 }
 
 @media screen and (max-width: 768px) {
     .FeaturedDoctor-container {
-        padding: 30px 0;
+        padding: 20px 10px;
+    }
 
-        .FeaturedDoctor-header {
-            .FeaturedDoctor-header-title {
-                font-size: 20px;
-            }
-        }
-
-        .FeaturedDoctor-content {
-            .FeaturedDoctor-item {
-                img {
-                    width: 160px;
-                    height: 160px;
-                }
-
-                span {
-                    font-size: 12px;
-                    max-width: 200px;
-
-                    &:first-of-type {
-                        font-size: 14px;
-                    }
-                }
-            }
+    .FeaturedDoctor-header {
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+        
+        .FeaturedDoctor-header-title {
+            font-size: 20px;
+            text-align: center;
         }
     }
+
+    .FeaturedDoctor-item {
+        padding: 10px;
+        
+        img {
+            width: 150px;
+            height: 150px;
+        }
+    }
+
+    .FeaturedDoctor-item-info {
+        padding: 12px;
+        max-width: 250px;
+    }
+
+    .FeaturedDoctor-item-info-name {
+        font-size: 16px;
+        padding-top: 24px;
+    }
+
+    .custom-arrow {
+        display: none;
+    }
+}
+
+.FeaturedDoctor-item-image {
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+    border-radius: 50%;
 }

@@ -245,7 +245,6 @@ class UserRedux extends Component {
                 address: formData.address,
                 image: formData.image,
             }
-
             await this.props.updateUserStart(user);
             await this.props.fetchAllUsersStart();
 
