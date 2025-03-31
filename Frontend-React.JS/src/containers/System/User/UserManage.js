@@ -86,93 +86,9 @@ class UserManage extends Component {
 
   render() {
     return (
-      <div className="users-container">
-        <ModelCreateUser
-          isOpen={this.state.isOpen}
-          toggle={() => this.setState({ isOpen: !this.state.isOpen })}
-          refreshUserList={this.fetchUserList}
-        />
-        <ModelEditUser
-          isOpen={this.state.isOpenEdit}
-          toggle={() => this.setState({ isOpenEdit: !this.state.isOpenEdit })}
-          refreshUserList={this.fetchUserList}
-          currentUser={this.state.currentUser}
-        />
-        <ConfirmModal />
-        <div className="title text-center">
-          <FormattedMessage id="system.user-manage.manage-users" />
-        </div>
-        <div className="users-table mt-4 mx-3">
-          <div className="d-flex justify-content-end">
-            <button className="btn btn-primary" onClick={this.handleAddUser}>
-              <FormattedMessage id="system.user-manage.add-user" />
-            </button>
-          </div>
-          <div className="table-responsive" style={{ maxHeight: "100vh", overflowY: "auto" }}>
-            <table className="table table-hover table-bordered">
-              <thead className="table-dark text-center">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.image" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.email" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.fullname" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.address" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.phone-number" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.gender" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.role" /></th>
-                  <th scope="col"><FormattedMessage id="system.user-manage.action" /></th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.users.map((user, index) => (
-                  <tr key={index} className="fs-5">
-                    <th scope="row" className="text-center">{index + 1}</th>
-                    <td className="text-center">
-                      <img
-                        src={user.image ? `${process.env.REACT_APP_BACKEND_URL}${user.image}` : 'http://localhost:8080/user/images/default.jfif'}
-                        alt="User"
-                        className="img-fluid rounded-circle"
-                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                      />
-                    </td>
-                    <td>{user.email}</td>
-                    <td>{user.firstName} {user.lastName}</td>
-                    <td>{user.address}</td>
-                    <td>{user.phoneNumber}</td>
-                    <td className="text-center">
-                      {user.gender === 1 ? (
-                        <span className="badge bg-primary fs-7"><FormattedMessage id="system.user-manage.male" /></span>
-                      ) : (
-                        <span className="badge bg-success fs-7"><FormattedMessage id="system.user-manage.female" /></span>
-                      )}
-                    </td>
-                    <td className="text-center">
-                      {user.roleID === "R0" ? (
-                        <span className="badge bg-primary fs-7"><FormattedMessage id="system.user-manage.admin" /></span>
-                      ) : user.roleID === "R1" ? (
-                        <span className="badge bg-success fs-7"><FormattedMessage id="system.user-manage.doctor" /></span>
-                      ) : (
-                        <span className="badge bg-secondary fs-7"><FormattedMessage id="system.user-manage.patient" /></span>
-                      )}
-                    </td>
-                    <td>
-                      <div className="d-flex justify-content-center gap-2">
-                        <button className="btn px-2 fs-7 btn-edit" onClick={() => this.handleEditUser(user)}>
-                          <i className="fas fa-pencil-alt"></i>
-                          <span className="mx-2"><FormattedMessage id="system.user-manage.edit" /></span>
-                        </button>
-                        <button className="btn px-2 fs-7 btn-delete" onClick={() => this.handleDeleteUser(user.id)}>
-                          <i className="fas fa-trash-alt"></i>
-                          <span className="mx-2"><FormattedMessage id="system.user-manage.delete" /></span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div className="user-manage-container">
+        <h1>User Manage</h1>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
       </div>
     );
   }

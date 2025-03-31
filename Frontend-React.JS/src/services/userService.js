@@ -99,8 +99,11 @@ const userService = {
 
     getUserRole(type, limit) {
         return axios.get(`/api/user/getrole?type=${type}&limit=${limit}`);
-    }
+    },
 
+    addDoctorInfo(data) {
+        return axios.post(`/api/user/adddoctorinfo`, data);
+    }
 };
 
 export default userService;

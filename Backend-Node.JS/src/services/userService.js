@@ -133,7 +133,7 @@ const deleteUser = async (id) => {
         if (!user) {
             throw new UserNotFoundError('User not found');
         }
-        
+
         await db.User.destroy({ where: { id } });
         return {
             status: 200,
@@ -170,7 +170,7 @@ const updateUser = async (id, data) => {
         if (data.roleID) {
             data.roleID = formatRoleID(data.roleID);
         }
-        
+
         if (data.roleID !== 'R1') {
             data.positionID = null;
         } else if (data.positionID) {
@@ -238,11 +238,43 @@ const getUserRole = async (type, limit) => {
     }
 };
 
-export default {
-    getlistUser,
-    getUserbyID,
-    createNewUser,
-    deleteUser,
-    updateUser,
-    getUserRole,
+const addDoctorInfo = (doctorInfo) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const doctorInfoData = {
+                doctorId: doctorInfo.doctorId,
+                contentMarkdown: doctorInfo.introduction,
+                contentHTML: doctorInfo.introductionHTML,
+                description: doctorInfo.description
+            }
+            console.log('doctorInfoData', doctorInfoData);
+            if (!doctorInfoData.doctorId || !doctorInfoData.contentMarkdown || !doctorInfoData.contentHTML || !doctorInfoData.description) {
+                return {
+                    status: 400,
+                    message: "Missing parameters"
+                };
+            }else{
+                await db.Markdown.create(doctorInfoData);
+                resolve({
+                    status: 200,
+                    message: "Add doctor info successfully",
+                    data: doctorInfoData,
+                    errCode: 0
+                });
+            }
+        } catch (error) {   
+            console.error('Error in addDoctorInfo:', error);
+            reject(error);
+        }
+    });
 };
+
+    export default {
+        getlistUser,
+        getUserbyID,
+        createNewUser,
+        deleteUser,
+        updateUser,
+        getUserRole,
+        addDoctorInfo
+    };

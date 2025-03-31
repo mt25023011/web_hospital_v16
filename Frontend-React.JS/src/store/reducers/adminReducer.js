@@ -13,6 +13,8 @@ const initialState = {
     deleteUser: null,
     isLoadingUpdateUser: false,
     updateUser: [],
+    isLoadingAddDoctorInfo: false,
+    addDoctorInfo: null
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -134,7 +136,26 @@ const adminReducer = (state = initialState, action) => {
                 isLoadingUpdateUser: false,
                 updateUser: null
             }        
-
+        case actionTypes.FETCH_ADD_DOCTOR_INFO_SUCCESS:
+            return {
+                ...state,
+                isLoadingAddDoctorInfo: false,
+                addDoctorInfo: action.data
+            }
+        case actionTypes.FETCH_ADD_DOCTOR_INFO_FAIL:
+            return {
+                ...state,
+                isLoadingAddDoctorInfo: false,
+                addDoctorInfo: null
+            }
+        case actionTypes.FETCH_ADD_DOCTOR_INFO_START:
+            return {
+                ...state,
+                isLoadingAddDoctorInfo: true
+            }
+            
+            
+            
         default:
             return state;
 

@@ -5,7 +5,7 @@ export const adminMenu = [
             [
                 { name: 'menu.system.user-manage.crud', link: '/system/user-manage' },
                 { name: 'menu.system.user-manage.crud-redux', link: '/system/user-redux' },
-                { name: 'menu.system.user-manage.doctor-manage', link: '/system/doctor-manage' },
+                { name: 'menu.system.user-manage.doctor-manage', link: '/system/DoctorManager/Doctor' },    
                 { name: 'menu.system.user-manage.patient-manage', link: '/system/patient-manage' },
                 { name: 'menu.system.user-manage.admin-manage', link: '/system/admin-manage' },
 

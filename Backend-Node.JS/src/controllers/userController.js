@@ -142,6 +142,21 @@ let getUserRole = async (req, res) => {
     }
 }
 
+let addDoctorInfo = async (req, res) => {
+    try {
+        const  doctorInfo  = req.body;
+        console.log('doctorInfo', doctorInfo);
+        if(!doctorInfo){
+            return sendResponse(res, 400, null, 'Missing parameters');
+        }
+        const data = await userService.addDoctorInfo(doctorInfo);
+        return sendResponse(res, 200, data, 'Doctor info added successfully');
+    } catch (error) {
+        console.error('Error in addDoctorInfo:', error);
+        return sendResponse(res, 500, null, 'Internal server error');
+    }
+}
+
 export default {
     getlistUser,
     getUserById,
@@ -149,4 +164,5 @@ export default {
     deleteUser,
     updateUser,
     getUserRole,
+    addDoctorInfo
 }

@@ -59,7 +59,11 @@ let initWebRoutes = (app) => {
 
     // user Role
     router.get('/api/user/getrole', userController.getUserRole);
+
+    // Doctor info routes
+    router.post('/api/user/adddoctorinfo', userController.addDoctorInfo);
     return app.use('/', router);
+    
 }
 
 export default initWebRoutes;

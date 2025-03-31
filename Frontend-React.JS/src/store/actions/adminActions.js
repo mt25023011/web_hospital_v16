@@ -232,3 +232,46 @@ export const updateUserStart = (data) => {
 }
 
 
+//add doctor info
+export const addDoctorInfoSuccess = (data) => ({
+    type: actionTypes.FETCH_ADD_DOCTOR_INFO_SUCCESS,
+    data: data
+})
+
+export const addDoctorInfoFail = (error) => ({
+    type: actionTypes.FETCH_ADD_DOCTOR_INFO_FAIL,
+    error: error
+})
+
+export const addDoctorInfoStart = (data) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await userService.addDoctorInfo(data);
+            console.log('res', res);
+            
+            if (res && res.data) {
+                dispatch(addDoctorInfoSuccess(res.data));
+                return {
+                    status: 200,
+                    message: res.data.message || "Add doctor information successfully",
+                    data: res.data
+                };
+            } else {
+                const errorMessage = res.data?.message || "Error adding doctor information";
+                dispatch(addDoctorInfoFail(errorMessage));
+                return {
+                    status: 400,
+                    message: errorMessage
+                };
+            }
+        } catch (error) {
+            console.log("error", error);
+            const errorMessage = error.response?.data?.message || error.message || "Error adding doctor information";
+            dispatch(addDoctorInfoFail(errorMessage));
+            return {
+                status: 400,
+                message: errorMessage
+            };
+        }
+    }
+}

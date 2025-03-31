@@ -14,7 +14,6 @@ import CommonUtils from "../../../utils/CommonUtils";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./userRedux.css";
 import { validateUser } from '../../../services/validationService';
-import Markdown from "./Markdown";
 
 class UserRedux extends Component {
     constructor(props) {
@@ -635,7 +634,6 @@ class UserRedux extends Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <Markdown />
             </Container>
         );
     }
