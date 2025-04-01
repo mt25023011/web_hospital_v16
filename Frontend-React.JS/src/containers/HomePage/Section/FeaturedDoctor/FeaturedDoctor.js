@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import './temp.css';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -66,12 +67,12 @@ CustomArrow.propTypes = {
 };
 
 // DoctorCard component to display individual doctor information
-const DoctorCard = React.memo(({ doctor, language }) => {
+const DoctorCard = React.memo(({ doctor, language, onClick }) => {
     const position = doctor.positionData?.[language === 'vi' ? 'value_Vi' : 'value_En'] || '';
     const image = transformImage(doctor.image);
 
     return (
-        <div className="FeaturedDoctor-item" role="article">
+        <div className="FeaturedDoctor-item" role="article" onClick={onClick}>
             <img
                 src={image}
                 alt={`${doctor.lastName} ${doctor.firstName}`}
@@ -149,6 +150,11 @@ class FeaturedDoctor extends Component {
         this.setState({ currentIndex });
     };
 
+    handleDoctorClick = (doctorId) => {
+        console.log("doctorId", doctorId);
+        this.props.history.push(`/patient/doctor-detail/${doctorId}`);
+    };
+
     render() {
         const { doctorList = [], language } = this.props;
         const { currentIndex } = this.state;
@@ -193,7 +199,7 @@ class FeaturedDoctor extends Component {
                         </button>
                     </div>
                 </div>
-                <div className='FeaturedDoctor-content'>
+                <div className='FeaturedDoctor-content' >
                     {this.state.isLoading ? (
                         <div className="loading-container" role="status" aria-label="Loading doctors">
                             <div className="loading-spinner"></div>
@@ -212,6 +218,7 @@ class FeaturedDoctor extends Component {
                                     key={`${doctor.id || index}`} 
                                     doctor={doctor} 
                                     language={language}
+                                    onClick={() => this.handleDoctorClick(doctor.id)}
                                 />
                             ))}
                         </Slider>
@@ -246,4 +253,4 @@ const mapDispatchToProps = dispatch => ({
     fetchDoctorList: () => dispatch(fetchDoctorList())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(FeaturedDoctor));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(injectIntl(FeaturedDoctor)));

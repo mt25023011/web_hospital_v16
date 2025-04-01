@@ -42,3 +42,33 @@ export const fetchDoctorListStart = () => ({
     type: actionTypes.FETCH_DOCTOR_LIST_START,
     isLoading: true
 })
+export const fetchDoctorDetail = (doctorId) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch(fetchDoctorDetailStart());
+            let res = await userService.getDoctorDetail(doctorId);
+            console.log(res);
+            if (res.success === true) {
+                dispatch(fetchDoctorDetailSuccess(res.data));
+            } else {
+                dispatch(fetchDoctorDetailFail(res.message));
+            }
+        } catch (error) {
+            dispatch(fetchDoctorDetailFail(error));
+        }
+    }
+}
+export const fetchDoctorDetailSuccess = (data) => ({
+    type: actionTypes.FETCH_DOCTOR_DETAIL_SUCCESS,
+    data: data
+})
+export const fetchDoctorDetailFail = (error) => ({
+    type: actionTypes.FETCH_DOCTOR_DETAIL_FAIL,
+    error: error
+})
+export const fetchDoctorDetailStart = () => ({
+    type: actionTypes.FETCH_DOCTOR_DETAIL_START,
+    isLoading: true
+})
+
+

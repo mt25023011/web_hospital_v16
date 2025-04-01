@@ -7,12 +7,13 @@ import FeaturedDoctor from './Section/FeaturedDoctor/FeaturedDoctor';
 import HandBook from './Section/HandBook/HandBook';
 import About from './Section/About/About';
 import HomeFooter from './HomeFooter';
-
+import HeaderBanner from './Section/HeaderBanner';
 class HomePage extends Component {
     render() {
         return (
             <div>
                 <HomeHeader />
+                <HeaderBanner />
                 <div style={{ height: "10px" }}></div>
                 <Specialty />
                 <div style={{ height: "10px" }}></div>

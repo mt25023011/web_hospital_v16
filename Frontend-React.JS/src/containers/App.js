@@ -20,6 +20,7 @@ import System from "../routes/System";
 import { CustomToastCloseButton } from "../components/CustomToast";
 import HomePage from "./HomePage/HomePage.js";
 import CustomScrollbars from "../components/CustomScrollbars.js";
+import DoctorDetail from "./HomePage/patient/DoctorDetail/DoctorDetail.js";
 class App extends Component {
   handlePersistorState = () => {
     const { persistor } = this.props;
@@ -57,6 +58,7 @@ class App extends Component {
                     component={userIsAuthenticated(System)}
                   />
                   <Route path={path.HOMEPAGE} component={HomePage} />
+                  <Route path={path.DOCTOR_DETAIL} component={DoctorDetail} />
                 </Switch>
               </div>
             </CustomScrollbars>

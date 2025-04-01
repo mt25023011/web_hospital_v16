@@ -103,6 +103,10 @@ const userService = {
 
     addDoctorInfo(data) {
         return axios.post(`/api/user/adddoctorinfo`, data);
+    },
+
+    getDoctorDetail(doctorId) {
+        return axios.get(`/api/user/getdoctorinfobyid?id=${doctorId}`);
     }
 };
 
