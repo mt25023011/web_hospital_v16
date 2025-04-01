@@ -60,8 +60,12 @@ let initWebRoutes = (app) => {
     // user Role
     router.get('/api/user/getrole', userController.getUserRole);
 
-    // Doctor info routes
+    // Doctor info routes not markdown
     router.post('/api/user/adddoctorinfo', userController.addDoctorInfo);
+
+    // Doctor info routes with markdown
+    router.get('/api/user/getdoctorinfobyid', userController.getDoctorInfoById);
+
     return app.use('/', router);
     
 }

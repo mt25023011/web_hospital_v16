@@ -187,6 +187,7 @@ class Doctor extends Component {
 
             const response = await this.props.addDoctorInfo(doctorInfo);
             console.log('response', response);
+            this.handleClearForm();
 
             if (response && response.status === 200) {
                 alert('Save doctor information successfully!');
@@ -201,7 +202,17 @@ class Doctor extends Component {
             this.setState({ isLoading: false });
         }
     }
-
+    handleClearForm = () => {
+        this.setState({
+            selectedDoctor: null,
+            introduction: '',
+            introductionHTML: '',
+            description: ''
+        });
+        this.props.fetchDoctorList();
+        // refesh page
+        window.location.reload();
+    }
     render() {
         const { selectedDoctor, description, filteredDoctors, isLoading } = this.state;
 

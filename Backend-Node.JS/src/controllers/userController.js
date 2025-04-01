@@ -157,6 +157,25 @@ let addDoctorInfo = async (req, res) => {
     }
 }
 
+let getDoctorInfoById = async (req, res) => {
+    try {
+        let id = req.query.id;
+        if(!id){
+            return sendResponse(res, 400, null, 'Missing parameters');
+        }
+        const data = await userService.getDoctorInfoById(id);
+        if(data.status === 400){
+            return sendResponse(res, 400, null, data.message);
+        }
+        if(data.status === 200){
+            return sendResponse(res, 200, data.data, data.message);
+        }
+    } catch (error) {
+        console.error('Error in getDoctorInfoById:', error);
+        return sendResponse(res, 500, null, 'Internal server error');
+    }
+}
+
 export default {
     getlistUser,
     getUserById,
@@ -164,5 +183,6 @@ export default {
     deleteUser,
     updateUser,
     getUserRole,
-    addDoctorInfo
+    addDoctorInfo,
+    getDoctorInfoById
 }

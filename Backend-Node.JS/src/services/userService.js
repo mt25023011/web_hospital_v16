@@ -253,7 +253,7 @@ const addDoctorInfo = (doctorInfo) => {
                     status: 400,
                     message: "Missing parameters"
                 };
-            }else{
+            } else {
                 await db.Markdown.create(doctorInfoData);
                 resolve({
                     status: 200,
@@ -262,19 +262,75 @@ const addDoctorInfo = (doctorInfo) => {
                     errCode: 0
                 });
             }
-        } catch (error) {   
+        } catch (error) {
             console.error('Error in addDoctorInfo:', error);
             reject(error);
         }
     });
 };
 
-    export default {
-        getlistUser,
-        getUserbyID,
-        createNewUser,
-        deleteUser,
-        updateUser,
-        getUserRole,
-        addDoctorInfo
-    };
+
+
+const getDoctorInfoById = async (id) => {
+    try {
+        console.log('id', id);
+        const doctorInfo = await db.User.findOne(
+            {
+                where: { id: id },
+                attributes: {
+                    include: ['id', 'firstName', 'lastName', 'email', 'phoneNumber', 'gender', 'image', 'address', 'roleID', 'positionID'],
+                    exclude: ['password']
+                },
+                include: [{
+                    model: db.Allcodes,
+                    as: 'positionData',
+                    attributes: ['value_En', 'value_Vi'],
+                },
+                {
+                    model: db.Allcodes,
+                    as: 'genderData',
+                    attributes: ['value_En', 'value_Vi'],
+                },
+                {
+                    model: db.Markdown,
+                    as: 'doctorData',
+                    attributes: [
+                        'id',
+                        'doctorId',
+                        'contentMarkdown',
+                        'contentHTML',
+                        'description'
+                    ]
+                }
+                ],
+                nest: true,
+                raw: true
+            });
+        console.log('doctorInfo', doctorInfo);
+        if (!doctorInfo) {
+            return {
+                status: 400,
+                message: "Doctor not found"
+            };
+        }
+        return {
+            status: 200,
+            message: "Get doctor info successfully",
+            data: doctorInfo
+        };
+    } catch (error) {
+        console.error('Error in getDoctorInfoById:', error);
+        throw error;
+    }
+}
+
+export default {
+    getlistUser,
+    getUserbyID,
+    createNewUser,
+    deleteUser,
+    updateUser,
+    getUserRole,
+    addDoctorInfo,
+    getDoctorInfoById
+};
