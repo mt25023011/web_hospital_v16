@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import HomeHeader from '../../../HomePage/HomeHeader';
 import HomeFooter from '../../../HomePage/HomeFooter';
-import { Container, Spinner, Row, Col, Alert } from 'react-bootstrap';
+import { Container, Spinner, Alert } from 'react-bootstrap';
 import { fetchDoctorDetail } from '../../../../store/actions/userActions';
 import { Buffer } from 'buffer';
 import './DoctorDetail.scss';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaUserMd, FaGraduationCap } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaUserMd } from 'react-icons/fa';
 
 // Utility functions
 const handleBase64Image = (image) => {
@@ -22,30 +22,44 @@ const renderHTML = (html) => {
     return { __html: html };
 };
 
+// Icon component
+const InfoIcon = React.memo(({ icon: Icon, text }) => (
+    <div className='info-item'>
+        <Icon className='info-icon' aria-hidden="true" />
+        <span>{text}</span>
+    </div>
+));
+
+InfoIcon.propTypes = {
+    icon: PropTypes.elementType.isRequired,
+    text: PropTypes.string.isRequired
+};
+
 // Sub-components
 const DoctorBasicInfo = React.memo(({ doctorDetail }) => (
     <div className='doctor-detail-info'>
         <div className='doctor-detail-name'>
             <span>{`${doctorDetail.lastName} ${doctorDetail.firstName}`}</span>
         </div>
-        <div className='doctor-detail-specialty'>
-            <FaUserMd aria-hidden="true" />
-            <span>{doctorDetail.positionData?.value_En || 'Doctor'}</span>
-        </div>
-        <div className='doctor-detail-phone'>
-            <FaPhone aria-hidden="true" />
-            <span>{doctorDetail.phoneNumber}</span>
-        </div>
-        <div className='doctor-detail-email'>
-            <FaEnvelope aria-hidden="true" />
-            <span>{doctorDetail.email}</span>
-        </div>
-        <div className='doctor-detail-address'>
-            <FaMapMarkerAlt aria-hidden="true" />
-            <span>{doctorDetail.address}</span>
-        </div>
+        <InfoIcon icon={FaUserMd} text={doctorDetail.positionData?.value_En || 'Doctor'} />
+        <InfoIcon icon={FaPhone} text={doctorDetail.phoneNumber} />
+        <InfoIcon icon={FaEnvelope} text={doctorDetail.email} />
+        <InfoIcon icon={FaMapMarkerAlt} text={doctorDetail.address} />
     </div>
 ));
+
+DoctorBasicInfo.propTypes = {
+    doctorDetail: PropTypes.shape({
+        firstName: PropTypes.string.isRequired,
+        lastName: PropTypes.string.isRequired,
+        positionData: PropTypes.shape({
+            value_En: PropTypes.string
+        }),
+        phoneNumber: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        address: PropTypes.string.isRequired
+    }).isRequired
+};
 
 const DoctorDescription = React.memo(({ description }) => (
     <div className='doctor-detail-description'>
@@ -53,91 +67,99 @@ const DoctorDescription = React.memo(({ description }) => (
     </div>
 ));
 
-class DoctorDetail extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            doctorId: '',
-            error: null
+DoctorDescription.propTypes = {
+    description: PropTypes.string
+};
+
+const DoctorEducation = React.memo(({ contentHTML }) => (
+    <div className='doctor-education-container'>
+        <div
+            className='education-content'
+            dangerouslySetInnerHTML={renderHTML(contentHTML || 'No education information available')} 
+        />
+    </div>
+));
+
+DoctorEducation.propTypes = {
+    contentHTML: PropTypes.string
+};
+
+const DoctorDetail = ({ doctorDetail, isLoadingDoctorDetail, fetchDoctorDetail, match, location }) => {
+    const [error, setError] = useState(null);
+
+    // Scroll to top effect
+    useEffect(() => {
+        const scrollToTop = () => {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
         };
-    }
 
-    componentDidMount() {
-        this.loadDoctorDetail();
-    }
+        scrollToTop();
+    }, [location.pathname]);
 
-    componentDidUpdate(prevProps) {
-        const { id } = this.props.match.params;
-        if (prevProps.match.params.id !== id) {
-            this.setState({ doctorId: id, error: null });
-            this.loadDoctorDetail();
-        }
-    }
+    // Load doctor detail effect
+    useEffect(() => {
+        const loadDoctorDetail = async () => {
+            try {
+                await fetchDoctorDetail(match.params.id);
+            } catch (error) {
+                setError('Failed to load doctor information. Please try again later.');
+            }
+        };
 
-    loadDoctorDetail = async () => {
-        try {
-            const { id } = this.props.match.params;
-            await this.props.fetchDoctorDetail(id);
-        } catch (error) {
-            this.setState({ error: 'Failed to load doctor information. Please try again later.' });
-        }
-    };
+        loadDoctorDetail();
+    }, [match.params.id, fetchDoctorDetail]);
 
-    render() {
-        const { doctorDetail, isLoadingDoctorDetail } = this.props;
-        const { error } = this.state;
-
-        return (
-            <div>
-                <HomeHeader />
-                <Container>
-                    <div className='doctor-detail-container'>
-                        {isLoadingDoctorDetail ? (
-                            <div className="text-center my-5" role="status" aria-label="Loading doctor information">
-                                <Spinner animation="border">
-                                    <span className="visually-hidden">Loading...</span>
-                                </Spinner>
-                            </div>
-                        ) : error ? (
-                            <Alert variant="danger" className="my-5">
-                                {error}
-                            </Alert>
-                        ) : doctorDetail ? (
+    return (
+        <div className="doctor-detail-page">
+            <HomeHeader />
+            <Container>
+                <div className='doctor-detail-container'>
+                    {isLoadingDoctorDetail ? (
+                        <div className="text-center my-5" role="status" aria-label="Loading doctor information">
+                            <Spinner animation="border">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>
+                    ) : error ? (
+                        <Alert variant="danger" className="my-5">
+                            {error}
+                        </Alert>
+                    ) : doctorDetail ? (
+                        <>
                             <div className='doctor-detail-content'>
                                 <div className='doctor-detail-left'>
                                     <div className='doctor-detail-image'>
                                         <img
                                             src={handleBase64Image(doctorDetail.image)}
                                             alt={`Doctor ${doctorDetail.firstName} ${doctorDetail.lastName}`}
-                                            className="img-fluid"
-                                        />
+                                            className="img-fluid" />
                                     </div>
-                                    <DoctorBasicInfo doctorDetail={doctorDetail} />
                                 </div>
                                 <div className='doctor-detail-right'>
-                                    <h3>About Doctor</h3>
-                                    <DoctorDescription description={doctorDetail.doctorData?.description} />
-                                    <div className='doctor-detail-education'>
-                                        <h3>Education & Experience</h3>
-                                        <div 
-                                            className='education-content'
-                                            dangerouslySetInnerHTML={renderHTML(doctorDetail.doctorData?.contentHTML || 'No education information available')}
-                                        />
+                                    <DoctorBasicInfo doctorDetail={doctorDetail} />
+                                    <div className='doctor-detail-section'>
+                                        <h3>About Doctor</h3>
+                                        <DoctorDescription description={doctorDetail.doctorData?.description} />
                                     </div>
                                 </div>
                             </div>
-                        ) : (
-                            <div className="text-center my-5">
-                                <p>No doctor information available</p>
-                            </div>
-                        )}
-                    </div>
-                </Container>
-                <HomeFooter />
-            </div>
-        );
-    }
-}
+                            <DoctorEducation contentHTML={doctorDetail.doctorData?.contentHTML} />
+                        </>
+                    ) : (
+                        <div className="text-center my-5">
+                            <p>No doctor information available</p>
+                        </div>
+                    )}
+                </div>
+            </Container>
+            <HomeFooter />
+        </div>
+    );
+};
 
 DoctorDetail.propTypes = {
     doctorDetail: PropTypes.shape({
@@ -156,7 +178,13 @@ DoctorDetail.propTypes = {
         })
     }),
     isLoadingDoctorDetail: PropTypes.bool,
-    fetchDoctorDetail: PropTypes.func.isRequired
+    fetchDoctorDetail: PropTypes.func.isRequired,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            id: PropTypes.string.isRequired
+        }).isRequired
+    }).isRequired,
+    location: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
