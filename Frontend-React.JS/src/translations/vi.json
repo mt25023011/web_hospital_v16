@@ -45,12 +45,19 @@
     "menu": {
         "system": {
             "user-manage": {
-                "header": "Quản lý người dùng",
+                "header": "Người dùng",
                 "doctor-manage": "Quản lý bác sĩ",
                 "patient-manage": "Quản lý bệnh nhân",
                 "admin-manage": "Quản lý admin",
+
                 "crud": "Quản lý crud",
                 "crud-redux": "Quản lý crud redux"
+            },
+            "doctor": {
+                "header": "Bác sĩ",
+                "user-manage": "Người Dùng",
+                "schedule-manage": "Quản lý lịch khám",
+                "schedule-manage-detail": "Quản lý lịch khám chi tiết"
             },
             "user-redux": {
                 "header": "Quản lý người dùng redux"

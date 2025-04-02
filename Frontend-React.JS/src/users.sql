@@ -81,8 +81,6 @@ ALTER TABLE `markdown`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
-INSERT INTO users (users.email, users.password) VALUES ('admin1@admin.com','$2a$12$NxjKonGT0.WONAznBvXz9e/UdVXWoxniVSRMEujjyeVkw1zCoyb1G');
-
 INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `password`, `address`, `phoneNumber`, `gender`, `image`, `roleID`, `positionID`, `createdAt`, `updatedAt`) VALUES
 (1, NULL, NULL, 'admin1@admin.com', '$2a$12$NxjKonGT0.WONAznBvXz9e/UdVXWoxniVSRMEujjyeVkw1zCoyb1G', NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `password`, `address`, `phoneNumber`, `gender`, `image`, `roleID`, `positionID`, `createdAt`, `updatedAt`) VALUES

@@ -275,3 +275,29 @@ export const addDoctorInfoStart = (data) => {
         }
     }
 }
+//fetch time 
+export const fetchTimeStart = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await userService.getAllCodesService("TIME");
+            if (res && res.data) {
+                dispatch(fetchTimeSuccess(res.data));
+            } else {
+                dispatch(fetchTimeFail(res.data));
+            }
+        } catch (error) {
+            console.log("error", error);
+            dispatch(fetchTimeFail(error));
+        }
+    }
+}
+export const fetchTimeSuccess = (data) => ({
+    type: actionTypes.FETCH_TIME_SUCCESS,
+    data: data
+})
+export const fetchTimeFail = (error) => ({
+    type: actionTypes.FETCH_TIME_FAIL,
+    error: error   
+})
+
+

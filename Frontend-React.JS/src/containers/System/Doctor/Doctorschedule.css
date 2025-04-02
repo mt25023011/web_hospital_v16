@@ -1,0 +1,19 @@
+.choose-doctor-container,
+.doctor-schedule-date {
+    margin-bottom: 20px;
+}
+
+.choose-doctor-title,
+.doctor-schedule-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.time-slot h6 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.time-slot .form-check {
+    margin-bottom: 5px;
+}

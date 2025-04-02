@@ -52,6 +52,12 @@
                 "crud": "CRUD",
                 "crud-redux": "CRUD redux"
             },
+            "doctor": {
+                "header": "Doctor",
+                "user-manage": "User manage",
+                "schedule-manage": "Schedule manage",
+                "schedule-manage-detail": "Schedule manage detail"
+            },
             "user-redux": {
                 "header": "User redux"
             },

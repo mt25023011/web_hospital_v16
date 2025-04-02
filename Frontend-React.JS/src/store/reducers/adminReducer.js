@@ -14,7 +14,9 @@ const initialState = {
     isLoadingUpdateUser: false,
     updateUser: [],
     isLoadingAddDoctorInfo: false,
-    addDoctorInfo: null
+    addDoctorInfo: null,
+    isLoadingTime: false,
+    time: [],
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -153,8 +155,23 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 isLoadingAddDoctorInfo: true
             }
-            
-            
+        case actionTypes.FETCH_TIME_START:
+            return {
+                ...state,
+                isLoadingTime: true
+            }
+        case actionTypes.FETCH_TIME_SUCCESS:
+            return {
+                ...state,
+                isLoadingTime: false,
+                time: action.data
+            }
+        case actionTypes.FETCH_TIME_FAIL:
+            return {
+                ...state,
+                isLoadingTime: false,
+                time: []
+            }
             
         default:
             return state;
